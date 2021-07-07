@@ -10,7 +10,7 @@ import { handleErrors } from './middleware/handleErrors.js'
 import { jwtMiddleware } from './middleware/userExtractor.js'
 
 import userRouter from './controllers/users.js'
-import characterRouter from './controllers/character.js'
+import characterRouter from './controllers/likes.js'
 import loginRouter from './controllers/login.js'
 import commentsRouter from './controllers/comments.js'
 dotenv.config()

@@ -4,6 +4,7 @@ const ERROR_HANDLES = {
   }),
   TokenExpirerError: response => response.status(401).json({ message: 'token expired' }),
   JsonWebTokenError: response => response.status(401).json({ error: 'token missing' }),
+  TokenExpiredError: response => response.status(204).json({ message: 'jwt expired' }),
   defaultError: (response, error) => response.status(500).json({ error: error })
 }
 
