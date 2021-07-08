@@ -16,29 +16,42 @@ router.get('/', async (request, response, next) => {
   }
 })
 
-router.put('/', (request, response, next) => {
+router.put('/', async (request, response, next) => {
   const { idComment, comment } = request.body
+
+  if (!(idComment && comment)) return response.status(404).json({ message: 'the parameters are wrong' })
 
   const newComment = { comment }
 
-  Comment.findByIdAndUpdate(idComment, newComment, { new: true })
-    .then(res => response.json(res))
-    .catch(next)
+  try {
+    await Comment.findByIdAndUpdate(
+      idComment,
+      newComment,
+      { new: true }
+    )
+    const commetList = await Comment.find({})
+    response.json(commetList)
+  } catch (error) {
+    next(error)
+  }
 })
 
 router.delete('/', async (request, response, next) => {
   const { idComment } = request.body
+
+  if (!idComment) return response.status(404).json({ message: 'the parameters are wrong' })
+
   try {
-    const commentsRes = await Comment.findByIdAndRemove(idComment)
-    response.status(202).json(commentsRes)
+    await Comment.findByIdAndRemove(idComment)
+
+    const commetList = await Comment.find({})
+    response.json(commetList)
   } catch (error) {
     next(error)
   }
 })
 
 router.post('/', jwtMiddleware, async (request, response, next) => {
-  console.log('vino')
-
   const { comment, idCharacter } = request.body
   const { userId } = request
 
