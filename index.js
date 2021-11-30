@@ -37,5 +37,5 @@ app.use(handleErrors)
 // server
 const $PORT = process.env.PORT || app.get('port')
 app.listen($PORT, () => {
-  console.log('server run on port', app.get('port'))
+  console.log('server run on port', $PORT)
 })
