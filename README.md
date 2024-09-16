@@ -29,7 +29,7 @@ Este proyecto demuestra mi capacidad para comprender y aplicar conceptos clave e
     $ git clone git@github.com:rsbmk/api-mavs.git
 
     # Entrar en el directorio
-    $ cd bike-api
+    $ cd api-mavs
 ```
 
 2. Instalar las dependencias
