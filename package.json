@@ -3,36 +3,38 @@
   "version": "1.0.0",
   "description": "this is a api of big people with a small gesture of recognition or affection",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "dev": "nodemon -r dotenv/config index.js",
+    "dev": "node --watch -r dotenv/config index.js",
     "start": "node -r dotenv/config index.js",
-    "test": "jest --verbose"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll"
   },
   "keywords": [],
   "author": "Roberto Bocio Melo",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "5.0.1",
+    "bcrypt": "5.1.1",
     "cors": "2.8.5",
     "cross-env": "7.0.3",
-    "dotenv": "10.0.0",
-    "express": "4.17.1",
-    "jsonwebtoken": "^8.5.1",
-    "mongoose": "5.12.14",
-    "mongoose-unique-validator": "2.0.3"
+    "dotenv": "16.4.5",
+    "express": "4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "8.6.2",
+    "mongoose-unique-validator": "5.0.1"
   },
-  "type": "module",
   "devDependencies": {
-    "eslint": "^7.30.0",
-    "eslint-config-standard": "^16.0.3",
-    "eslint-plugin-import": "^2.23.4",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^5.1.0",
-    "jest": "^27.0.4",
-    "nodemon": "2.0.7"
+    "@types/express": "^4.17.21",
+    "jest": "^29.7.0"
   },
+  "exclude": [
+    "node_modules"
+  ],
   "jest": {
-    "testEnvironment": "node"
-  },
-  "exclude": ["node_modules"]
+    "testEnvironment": "node",
+    "transform": {},
+    "setupFiles": [
+      "<rootDir>/test-setup.js"
+    ]
+  }
 }
