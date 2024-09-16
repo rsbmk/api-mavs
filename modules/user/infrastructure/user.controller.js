@@ -1,6 +1,6 @@
 // @ts-check
 
-import { Utils } from "../utils.js";
+import { Utils } from "../../utils/index.js";
 
 /**
  * @typedef {import('../domain/user.type').IUserService} IUserService
