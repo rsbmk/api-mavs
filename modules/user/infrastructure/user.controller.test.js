@@ -1,4 +1,6 @@
 import { UserController } from "./user.controller.js";
+import { UserRepository } from "./user.repository.js";
+import { UserService } from "../application/user.service.js";
 
 describe("create", () => {
   it("should create a user when valid data is provided", async () => {
@@ -124,5 +126,799 @@ describe("findOneById", () => {
     expect(userService.findOneById).toHaveBeenCalledWith("invalid-id");
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({ success: false, message: "User not found" });
+  });
+});
+
+describe("findOneByUsername", () => {
+  it("should return 200 status and user data when user is found by username", async () => {
+    const req = { params: { username: "john_doe" } };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    const userService = {
+      findOneByUsername: jest.fn().mockResolvedValue({ id: 1, username: "john_doe" }),
+    };
+
+    const userController = new UserController(userService);
+    await userController.findOneByUsername(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ success: true, message: "user found", data: { id: 1, username: "john_doe" } });
+    expect(userService.findOneByUsername).toHaveBeenCalledWith("john_doe");
+  });
+
+  it("should return 200 status and user data when user is found by username", async () => {
+    const req = { params: { username: "john_doe" } };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    const userService = {
+      findOneByUsername: jest.fn().mockResolvedValue({ id: 1, username: "john_doe" }),
+    };
+
+    const userController = new UserController(userService);
+    await userController.findOneByUsername(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ success: true, message: "user found", data: { id: 1, username: "john_doe" } });
+    expect(userService.findOneByUsername).toHaveBeenCalledWith("john_doe");
+  });
+
+  it("should return 404 status when user is not found by username", async () => {
+    const req = { params: { username: "unknown_user" } };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+    const userService = {
+      findOneByUsername: jest.fn().mockRejectedValue(new Error("User not found")),
+    };
+    const userController = new UserController(userService);
+
+    await userController.findOneByUsername(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "User not found" });
+    expect(userService.findOneByUsername).toHaveBeenCalledWith("unknown_user");
+  });
+
+  it("should return 404 status when user is not found", async () => {
+    const req = { params: { username: "unknown_user" } };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+    const userService = {
+      findOneByUsername: jest.fn().mockRejectedValue(new Error("User not found")),
+    };
+
+    const userController = new UserController(userService);
+    await userController.findOneByUsername(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "User not found" });
+    expect(userService.findOneByUsername).toHaveBeenCalledWith("unknown_user");
+  });
+
+  it("should handle cases where username parameter is missing or undefined", async () => {
+    const req = { params: {} };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+    const userService = {
+      findOneByUsername: jest.fn().mockRejectedValue(new Error("Username parameter is missing or undefined")),
+    };
+
+    const userController = new UserController(userService);
+    await userController.findOneByUsername(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Username parameter is missing or undefined" });
+  });
+});
+
+describe("update", () => {
+  it("should update user when valid id and user data are provided", async () => {
+    const req = { params: { id: "123" }, body: { name: "John Doe" } };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    const userService = {
+      update: jest.fn().mockResolvedValue({ id: "123", name: "John Doe" }),
+    };
+
+    const utils = {
+      buildSuccessResponse: jest.fn().mockReturnValue({ success: true, message: "user updated", data: { id: "123", name: "John Doe" } }),
+    };
+
+    const userController = new UserController(userService, utils);
+    await userController.update(req, res);
+
+    expect(userService.update).toHaveBeenCalledWith("123", { name: "John Doe" });
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ success: true, message: "user updated", data: { id: "123", name: "John Doe" } });
+  });
+
+  it("should return 200 status code with success message when update is successful", async () => {
+    const req = { params: { id: "123" }, body: { name: "John Doe" } };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    const userService = {
+      update: jest.fn().mockResolvedValue({ id: "123", name: "John Doe" }),
+    };
+
+    const utils = {
+      buildSuccessResponse: jest.fn().mockReturnValue({ success: true, message: "user updated", data: { id: "123", name: "John Doe" } }),
+    };
+
+    const userController = new UserController(userService, utils);
+    await userController.update(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ success: true, message: "user updated", data: { id: "123", name: "John Doe" } });
+  });
+
+  it("should return 404 status code when user id does not exist", async () => {
+    const req = { params: { id: "999" }, body: { name: "John Doe" } };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    const userService = {
+      update: jest.fn().mockRejectedValue(new Error("User not found")),
+    };
+
+    const utils = {
+      buildErrorResponse: jest.fn().mockReturnValue({ success: false, message: "User not found" }),
+    };
+
+    const userController = new UserController(userService, utils);
+    await userController.update(req, res);
+
+    expect(userService.update).toHaveBeenCalledWith("999", { name: "John Doe" });
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "User not found" });
+  });
+
+  it("should return 404 status code with error message when update fails", async () => {
+    const req = { params: { id: "123" }, body: { name: "John Doe" } };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    const userService = {
+      update: jest.fn().mockRejectedValue(new Error("Update failed")),
+    };
+
+    const utils = {
+      buildErrorResponse: jest.fn().mockReturnValue({ success: false, message: "Update failed" }),
+    };
+
+    const userController = new UserController(userService, utils);
+    await userController.update(req, res);
+
+    expect(userService.update).toHaveBeenCalledWith("123", { name: "John Doe" });
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Update failed" });
+  });
+
+  it("should handle invalid user data in request body", async () => {
+    const req = { params: { id: "123" }, body: null };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    const userService = {
+      update: jest.fn().mockRejectedValue(new Error("Invalid data")),
+    };
+
+    const utils = {
+      buildErrorResponse: jest.fn().mockReturnValue({ success: false, message: "Invalid data" }),
+    };
+
+    const userController = new UserController(userService, utils);
+    await userController.update(req, res);
+
+    expect(userService.update).toHaveBeenCalledWith("123", null);
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Invalid data" });
+  });
+});
+
+describe("delete", () => {
+  it("should delete a user when a valid ID is provided", async () => {
+    const req = { params: { id: "valid_id" } };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    const userService = {
+      delete: jest.fn().mockResolvedValue({ id: "valid_id" }),
+    };
+
+    const utils = {
+      buildSuccessResponse: jest.fn().mockReturnValue({ success: true, message: "user deleted", data: { id: "valid_id" } }),
+    };
+
+    const userController = new UserController(userService, utils);
+    await userController.delete(req, res);
+
+    expect(userService.delete).toHaveBeenCalledWith("valid_id");
+  });
+
+  it("should return 200 status code on successful deletion", async () => {
+    const req = { params: { id: "valid_id" } };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    const userService = {
+      delete: jest.fn().mockResolvedValue({ id: "valid_id" }),
+    };
+
+    const utils = {
+      buildSuccessResponse: jest.fn().mockReturnValue({ success: true, message: "user deleted", data: { id: "valid_id" } }),
+    };
+
+    const userController = new UserController(userService, utils);
+    await userController.delete(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
+
+  it("should handle the case where the user ID does not exist", async () => {
+    const req = { params: { id: "invalid_id" } };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    const userService = {
+      delete: jest.fn().mockRejectedValue(new Error("User not found")),
+    };
+
+    const utils = {
+      buildErrorResponse: jest.fn().mockReturnValue({ success: false, message: "User not found" }),
+    };
+
+    const userController = new UserController(userService, utils);
+    await userController.delete(req, res);
+
+    expect(userService.delete).toHaveBeenCalledWith("invalid_id");
+  });
+
+  it("should return 404 status code if the user ID is not found", async () => {
+    const req = { params: { id: "invalid_id" } };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    const userService = {
+      delete: jest.fn().mockRejectedValue(new Error("User not found")),
+    };
+
+    const utils = {
+      buildErrorResponse: jest.fn().mockReturnValue({ success: false, message: "User not found" }),
+    };
+
+    const userController = new UserController(userService, utils);
+    await userController.delete(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+  });
+
+  it("should return an error message in the response body if the user ID is not found", async () => {
+    const req = { params: { id: "invalid_id" } };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    const userService = {
+      delete: jest.fn().mockRejectedValue(new Error("User not found")),
+    };
+
+    const utils = {
+      buildErrorResponse: jest.fn().mockReturnValue({ success: false, message: "User not found" }),
+    };
+
+    const userController = new UserController(userService, utils);
+    await userController.delete(req, res);
+
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "User not found" });
+  });
+});
+
+/**
+ * Integrations tests
+ */
+
+describe("Integrations - create user", () => {
+  it("should create a new user", async () => {
+    const userModel = {
+      create: jest.fn().mockResolvedValue({}),
+      findOne: jest.fn().mockResolvedValue(null),
+      findByIdAndUpdate: jest.fn().mockResolvedValue(null),
+    };
+
+    const userController = new UserController(new UserService(new UserRepository(userModel)));
+
+    const req = {
+      body: {
+        name: "test",
+        username: "test",
+        password: "test",
+      },
+    };
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await userController.create(req, res);
+
+    expect(userModel.create).toHaveBeenCalled();
+    // validate that password not is the same "test"
+    expect(userModel.create).not.toHaveBeenCalledWith({ password: "test" });
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.json).toHaveBeenCalledWith({ success: true, message: "user created", data: {} });
+  });
+
+  it("should return an error message in the response body if the user already exists", async () => {
+    const req = {
+      body: {
+        name: "test",
+        username: "test",
+        password: "test",
+      },
+    };
+
+    const userModel = {
+      create: jest.fn().mockResolvedValue({}),
+      findOne: jest.fn().mockResolvedValue(req.body),
+      findByIdAndUpdate: jest.fn().mockResolvedValue(null),
+    };
+
+    const userController = new UserController(new UserService(new UserRepository(userModel)));
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await userController.create(req, res);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "The username test already exists" });
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(userModel.findOne).toHaveBeenCalledWith({ state: true, username: "test" });
+  });
+
+  it("should return an error message in the response if the user is invalid", async () => {
+    const req = {
+      body: {
+        password: "test",
+      },
+    };
+
+    const userModel = {
+      create: jest.fn().mockResolvedValue(null),
+      findOne: jest.fn().mockResolvedValue(null),
+      findByIdAndUpdate: jest.fn().mockResolvedValue(null),
+    };
+
+    const userController = new UserController(new UserService(new UserRepository(userModel)));
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await userController.create(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "username, password and name are required" });
+    expect(userModel.create).not.toHaveBeenCalled();
+  });
+
+  it("should return an error message if the repository throws an error", async () => {
+    const req = {
+      body: {
+        name: "test",
+        username: "test",
+        password: "test",
+      },
+    };
+
+    const userModel = {
+      create: jest.fn().mockRejectedValue(new Error("Error creating user")),
+      findOne: jest.fn().mockResolvedValue(null),
+      findByIdAndUpdate: jest.fn().mockResolvedValue(null),
+    };
+
+    const userController = new UserController(new UserService(new UserRepository(userModel)));
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await userController.create(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: `Error saving user: ${req.body.username}` });
+    expect(userModel.create).toHaveBeenCalled();
+  });
+});
+
+describe("Integrations - find one by id", () => {
+  it("should find a user by id", async () => {
+    const userFinded = {
+      id: "test",
+      name: "test",
+      username: "test",
+      password: "test",
+    };
+
+    const req = {
+      params: {
+        id: "test",
+      },
+    };
+
+    const userModel = {
+      findOne: jest.fn().mockResolvedValue(userFinded),
+    };
+
+    const userController = new UserController(new UserService(new UserRepository(userModel)));
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await userController.findOneById(req, res);
+
+    expect(userModel.findOne).toHaveBeenCalledWith({ _id: req.params.id, state: true });
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ success: true, message: "user found", data: userFinded });
+  });
+
+  it("should return an error message if the user repository throws an error", async () => {
+    const req = {
+      params: {
+        id: "test",
+      },
+    };
+
+    const userModel = {
+      findOne: jest.fn().mockRejectedValue(new Error("Error finding user")),
+    };
+
+    const userController = new UserController(new UserService(new UserRepository(userModel)));
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await userController.findOneById(req, res);
+
+    expect(userModel.findOne).toHaveBeenCalledWith({ _id: req.params.id, state: true });
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Error finding user with id test" });
+  });
+
+  it("should return an error message if the user already exists", async () => {
+    const req = {
+      params: {
+        id: "test",
+      },
+    };
+
+    const userModel = {
+      findOne: jest.fn().mockResolvedValue(null),
+    };
+
+    const userController = new UserController(new UserService(new UserRepository(userModel)));
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await userController.findOneById(req, res);
+
+    expect(userModel.findOne).toHaveBeenCalledWith({ _id: req.params.id, state: true });
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "User with id test not found" });
+  });
+});
+
+describe("Integrations - find one by username", () => {
+  it("should find a user by username", async () => {
+    const userFinded = {
+      id: "test",
+      name: "test",
+      username: "test",
+      password: "test",
+    };
+
+    const req = {
+      params: {
+        username: "test",
+      },
+    };
+
+    const userModel = {
+      findOne: jest.fn().mockResolvedValue(userFinded),
+    };
+
+    const userController = new UserController(new UserService(new UserRepository(userModel)));
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await userController.findOneByUsername(req, res);
+
+    expect(userModel.findOne).toHaveBeenCalledWith({ username: req.params.username, state: true });
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ success: true, message: "user found", data: userFinded });
+  });
+
+  it("should return an error message if the user repository throws an error", async () => {
+    const req = {
+      params: {
+        username: "test",
+      },
+    };
+
+    const userModel = {
+      findOne: jest.fn().mockRejectedValue(new Error("Error finding user")),
+    };
+
+    const userController = new UserController(new UserService(new UserRepository(userModel)));
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await userController.findOneByUsername(req, res);
+
+    expect(userModel.findOne).toHaveBeenCalledWith({ username: req.params.username, state: true });
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Error finding user with username test" });
+  });
+
+  it("should return an error message if the user already exists", async () => {
+    const req = {
+      params: {
+        username: "test",
+      },
+    };
+
+    const userModel = {
+      findOne: jest.fn().mockResolvedValue(null),
+    };
+
+    const userController = new UserController(new UserService(new UserRepository(userModel)));
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await userController.findOneByUsername(req, res);
+
+    expect(userModel.findOne).toHaveBeenCalledWith({ username: req.params.username, state: true });
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "User with username test not found" });
+  });
+});
+
+describe("Integrations - update user", () => {
+  it("should update a user", async () => {
+    const userUpdated = {
+      id: "test",
+      name: "test",
+      username: "test",
+      password: "test",
+    };
+
+    const req = {
+      params: {
+        id: "test",
+      },
+      body: {
+        name: "test",
+        username: "test",
+        password: "test",
+      },
+    };
+
+    const userModel = {
+      findByIdAndUpdate: jest.fn().mockResolvedValue(userUpdated),
+    };
+
+    const userController = new UserController(new UserService(new UserRepository(userModel)));
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await userController.update(req, res);
+
+    expect(userModel.findByIdAndUpdate).toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ success: true, message: "user updated", data: userUpdated });
+  });
+
+  it("should return an error message if the user id is not valid", async () => {
+    const req = {
+      params: {
+        id: null,
+      },
+      body: {
+        name: "test",
+        username: "test",
+        password: "test",
+      },
+    };
+
+    const userModel = {
+      findByIdAndUpdate: jest.fn().mockResolvedValue(null),
+    };
+
+    const userController = new UserController(new UserService(new UserRepository(userModel)));
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await userController.update(req, res);
+
+    expect(userModel.findByIdAndUpdate).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "id is required" });
+  });
+
+  it("should return an error message if the user is not valid", async () => {
+    const req = {
+      params: {
+        id: "test",
+      },
+      body: {
+        name: null,
+        username: null,
+        password: "test",
+      },
+    };
+
+    const userModel = {
+      findByIdAndUpdate: jest.fn().mockResolvedValue(null),
+    };
+
+    const userController = new UserController(new UserService(new UserRepository(userModel)));
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await userController.update(req, res);
+
+    expect(userModel.findByIdAndUpdate).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "name, username or characters are required" });
+  });
+
+  it("should return an error message if the user repository throws an error", async () => {
+    const req = {
+      params: {
+        id: "test",
+      },
+      body: {
+        name: "test",
+        username: "test",
+        password: "test",
+      },
+    };
+
+    const userModel = {
+      findByIdAndUpdate: jest.fn().mockRejectedValue(new Error("Error updating user")),
+    };
+
+    const userController = new UserController(new UserService(new UserRepository(userModel)));
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await userController.update(req, res);
+
+    // validate that have been called only with name, username and password
+    expect(userModel.findByIdAndUpdate).toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Error updating user with id test" });
+  });
+});
+
+describe("Integrations - delete user", () => {
+  it("should delete a user", async () => {
+    const userDeleted = {
+      id: "test",
+      name: "test",
+      username: "test",
+      password: "test",
+    };
+
+    const req = {
+      params: {
+        id: "test",
+      },
+    };
+
+    const userModel = {
+      findByIdAndUpdate: jest.fn().mockResolvedValue(userDeleted),
+    };
+
+    const userController = new UserController(new UserService(new UserRepository(userModel)));
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await userController.delete(req, res);
+
+    expect(userModel.findByIdAndUpdate).toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ success: true, message: "user deleted", data: userDeleted });
+  });
+
+  it("should return an error message if the user repository throws an error", async () => {
+    const req = {
+      params: {
+        id: "test",
+      },
+    };
+
+    const userModel = {
+      findByIdAndUpdate: jest.fn().mockRejectedValue(new Error("Error deleting user")),
+    };
+
+    const userController = new UserController(new UserService(new UserRepository(userModel)));
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await userController.delete(req, res);
+
+    expect(userModel.findByIdAndUpdate).toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Error deleting user with id test" });
   });
 });
