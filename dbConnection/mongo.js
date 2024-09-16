@@ -1,21 +1,18 @@
-import mongoose from 'mongoose'
-const connectionString = process.env.MONGO_DB_URI
+import mongoose from "mongoose";
+const connectionString = process.env.MONGO_DB_URI;
 
 // conexion a la mongodb
-mongoose.connect(connectionString, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-  useCreateIndex: true
-})
+mongoose
+  .connect(connectionString)
   .then(() => {
-    console.log('Database connected')
-  }).catch(err => {
-    console.error('hubo un error', err)
+    console.log("✅ Database connected");
   })
+  .catch((err) => {
+    console.error("❌ Error connecting to database: ", err);
+  });
 
 // cerrar el servidor cuando haya un error
-process.on('uncaughtException', error => {
-  console.error(error)
-  mongoose.disconnect()
-})
+process.on("uncaughtException", (error) => {
+  console.error(error);
+  mongoose.disconnect();
+});
