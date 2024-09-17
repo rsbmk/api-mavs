@@ -5,7 +5,7 @@ import { Router } from "express";
 import { UserController } from "./user.controller.js";
 import { UserService } from "../application/user.service.js";
 import { UserRepository } from "./user.repository.js";
-import { UserModel } from "../../../models/users.js";
+import { UserModel } from "./users.model.js";
 
 const userController = new UserController(new UserService(new UserRepository(UserModel)));
 export const userRouter = Router();

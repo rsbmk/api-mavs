@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import { Comment } from "../models/comments.js";
-import { UserModel } from "../models/users.js";
+import { UserModel } from "../modules/user/infrastructure/users.model.js/index.js";
 
 import { jwtMiddleware } from "../middleware/userExtractor.js";
 
