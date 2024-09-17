@@ -11,8 +11,8 @@ import { jwtMiddleware } from "./middleware/userExtractor.js";
 
 import { userRouter } from "./modules/user/infrastructure/user.route.js";
 import { commentRouter } from "./modules/comments/infrastructure/comment.route.js";
+import { loginRouter } from "./modules/login/infrastructure/login.route.js";
 import characterRouter from "./controllers/likes.js";
-import loginRouter from "./controllers/login.js";
 
 const app = express();
 
