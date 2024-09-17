@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { SECRET_JWT } from "../modules/utils/constants.js";
 
 export const jwtMiddleware = (request, response, next) => {
   // recuperamos el token de la cabecera para autorizar
@@ -12,7 +13,7 @@ export const jwtMiddleware = (request, response, next) => {
 
   let decodeToken;
   try {
-    decodeToken = jwt.verify(token, process.env.SECRET_JWT);
+    decodeToken = jwt.verify(token, SECRET_JWT);
   } catch (error) {
     console.log({ error });
     return response.status(401).json({ message: "no authorization" });

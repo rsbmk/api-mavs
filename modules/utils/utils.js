@@ -1,4 +1,5 @@
 // @ts-check
+import { NODE_ENV } from "../utils/constants.js";
 
 /**
  * @typedef {{
@@ -8,7 +9,7 @@
  */
 
 export class Utils {
-  isDevelopment = process.env.NODE_ENV === "development";
+  isDevelopment = NODE_ENV === "development";
   /**
    * Build success response
    * @param {string} message - The message to respond client

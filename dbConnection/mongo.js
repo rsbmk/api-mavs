@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
-const connectionString = process.env.MONGO_DB_URI;
+import { MONGO_DB_URI } from "../modules/utils/constants.js";
 
 // conexion a la mongodb
 mongoose
-  .connect(connectionString)
+  .connect(MONGO_DB_URI)
   .then(() => {
     console.log("✅ Database connected");
   })
