@@ -11,7 +11,7 @@ router.post("/", async (request, response, next) => {
   const { username, password } = request.body;
 
   const user = await UserModel.findOne({ username });
-  const passwordCorrect = user === null ? false : await bcrypt.compare(password, user.passwordHash);
+  const passwordCorrect = user === null ? false : await bcrypt.compare(password, user.password);
 
   if (!(user && passwordCorrect)) {
     response.status(401).json({
