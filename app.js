@@ -10,9 +10,9 @@ import { handleErrors } from "./middleware/handleErrors.js";
 import { jwtMiddleware } from "./middleware/userExtractor.js";
 
 import { userRouter } from "./modules/user/infrastructure/user.route.js";
+import { commentRouter } from "./modules/comments/infrastructure/comment.route.js";
 import characterRouter from "./controllers/likes.js";
 import loginRouter from "./controllers/login.js";
-import commentsRouter from "./controllers/comments.js";
 
 const app = express();
 
@@ -30,9 +30,10 @@ app.use("/status", (req, res) => {
 
 // routers
 app.use("/v1/api/users", userRouter);
+app.use("/v1/api/comments", jwtMiddleware, commentRouter);
+
 app.use("/v1/api/login", loginRouter);
 app.use("/v1/api/characters", jwtMiddleware, characterRouter);
-app.use("/v1/api/comments", commentsRouter);
 
 // midelware low
 app.use(notFound);
