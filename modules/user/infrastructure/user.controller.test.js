@@ -1,5 +1,5 @@
 import { UserController } from "./user.controller.js";
-import { UserRepository } from "./user.repository.js/index.js";
+import { UserRepository } from "./user.repository.js";
 import { UserService } from "../application/user.service.js";
 
 describe("create", () => {
