@@ -1,13 +1,8 @@
 // @ts-check
 
 import { Router } from "express";
+import { commentController } from "./comment.injections.js";
 
-import { CommentController } from "./comment.controller.js";
-import { CommentService } from "../application/comment.service.js";
-import { CommentRepository } from "./comment.repository.js";
-import { CommentModel } from "./comments.model.js";
-
-const commentController = new CommentController(new CommentService(new CommentRepository(CommentModel)));
 export const commentRouter = Router();
 
 commentRouter
