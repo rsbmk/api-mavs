@@ -297,3 +297,95 @@ describe("delete", () => {
     await expect(userService.delete(undefined)).rejects.toThrow("Error deleting user with id undefined");
   });
 });
+
+describe("cleanPassword", () => {
+  it("should remove password from user object", () => {
+    const user = { id: "1", name: "John Doe", password: "secret" };
+    const userService = new UserService();
+    const result = userService.cleanPassword(user);
+    expect(result).not.toHaveProperty("password");
+  });
+
+  it("should return user object without password", () => {
+    const user = { id: "1", name: "John Doe", password: "secret" };
+    const userService = new UserService();
+    const result = userService.cleanPassword(user);
+    expect(result).toEqual({ id: "1", name: "John Doe" });
+  });
+
+  it("should handle user object without password property", () => {
+    const user = { id: "1", name: "John Doe" };
+    const userService = new UserService();
+    const result = userService.cleanPassword(user);
+    expect(result).toEqual({ id: "1", name: "John Doe" });
+  });
+
+  it("should handle user object with password set to null", () => {
+    const user = { id: "1", name: "John Doe", password: null };
+    const userService = new UserService();
+    const result = userService.cleanPassword(user);
+    expect(result).toEqual({ id: "1", name: "John Doe" });
+  });
+
+  it("should handle user object with password set to undefined", () => {
+    const user = { id: "1", name: "John Doe", password: undefined };
+    const userService = new UserService();
+    const result = userService.cleanPassword(user);
+    expect(result).toEqual({ id: "1", name: "John Doe" });
+  });
+});
+
+describe("findUserByUsernameWithPassword", () => {
+  it("should return user object when username exists", async () => {
+    const user = { id: "1", username: "johndoe", password: "hashedpassword" };
+    const mockUserRepository = {
+      findOneByUsername: jest.fn().mockResolvedValue(user),
+    };
+    const userService = new UserService(mockUserRepository);
+
+    expect(await userService.findUserByUsernameWithPassword("johndoe")).toEqual(user);
+    expect(mockUserRepository.findOneByUsername).toHaveBeenCalledWith("johndoe");
+  });
+
+  it("should throw error when username does not exist", async () => {
+    const mockUserRepository = {
+      findOneByUsername: jest.fn().mockResolvedValue(null),
+    };
+    const userService = new UserService(mockUserRepository);
+
+    await expect(userService.findUserByUsernameWithPassword("nonexistentuser")).rejects.toThrow("User with username nonexistentuser not found");
+    expect(mockUserRepository.findOneByUsername).toHaveBeenCalledWith("nonexistentuser");
+  });
+
+  it("should throw error when username is an empty string", async () => {
+    const mockUserRepository = {
+      findOneByUsername: jest.fn().mockResolvedValue(null),
+    };
+    const userService = new UserService(mockUserRepository);
+
+    await expect(userService.findUserByUsernameWithPassword("")).rejects.toThrow("User with username  not found");
+    expect(mockUserRepository.findOneByUsername).toHaveBeenCalledWith("");
+  });
+
+  it("should throw error when username is null or undefined", async () => {
+    const mockUserRepository = {
+      findOneByUsername: jest.fn().mockResolvedValue(null),
+    };
+    const userService = new UserService(mockUserRepository);
+
+    await expect(userService.findUserByUsernameWithPassword(null)).rejects.toThrow("User with username null not found");
+    await expect(userService.findUserByUsernameWithPassword(undefined)).rejects.toThrow("User with username undefined not found");
+    expect(mockUserRepository.findOneByUsername).toHaveBeenCalledWith(null);
+    expect(mockUserRepository.findOneByUsername).toHaveBeenCalledWith(undefined);
+  });
+
+  it("should throw error when UserRepository throws an unexpected error", async () => {
+    const mockUserRepository = {
+      findOneByUsername: jest.fn().mockRejectedValue(new Error("Unexpected error")),
+    };
+    const userService = new UserService(mockUserRepository);
+
+    await expect(userService.findUserByUsernameWithPassword("johndoe")).rejects.toThrow("Error finding user with username johndoe");
+    expect(mockUserRepository.findOneByUsername).toHaveBeenCalledWith("johndoe");
+  });
+});

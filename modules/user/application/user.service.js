@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 
 /**
  * @typedef {import('../domain/user.type.js').User} User
+ * @typedef {import('../domain/user.type.js').UserWithoutPassword} UserWithoutPassword
  * @typedef {import('../domain/user.type.js').CreateUserDTO} CreateUserDTO
  * @typedef {import('../domain/user.type.js').IUserRespository} IUserRespository
  */
@@ -28,7 +29,7 @@ export class UserService {
    * Saves a new user to the database.
    *
    * @param {CreateUserDTO} user - The user object to be saved.
-   * @return {Promise<User>} A promise that resolves with the saved user.
+   * @return {Promise<UserWithoutPassword>} A promise that resolves with the saved user.
    *
    * @throws {Error} If any of the required fields are missing.
    * @throws {Error} If the username already exists.
@@ -47,17 +48,19 @@ export class UserService {
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
-    return this.userRepository.save({ name, username, password: passwordHash }).catch(() => {
+    const userCreated = await this.userRepository.save({ name, username, password: passwordHash }).catch(() => {
       // TODO: send this error to sentry
       throw new Error(`Error saving user: ${user.username}`);
     });
+
+    return this.cleanPassword(userCreated);
   }
 
   /**
    * Retrieves a user by their unique identifier.
    *
    * @param {string} id - The unique identifier of the user to be retrieved.
-   * @return {Promise<User>} The user object if found, otherwise null.
+   * @return {Promise<UserWithoutPassword>} The user object if found, otherwise null.
    *
    * @throws {Error} If the user is not found.
    */
@@ -71,13 +74,13 @@ export class UserService {
       throw new Error(`User with id ${id} not found`);
     }
 
-    return user;
+    return this.cleanPassword(user);
   }
 
   /**
    * Retrieves a user by their username.
    * @param {string} username - The username of the user to be retrieved.
-   * @returns {Promise<User>} The user object if found, otherwise null.
+   * @returns {Promise<UserWithoutPassword>} The user object if found, otherwise null.
    */
   async findOneByUsername(username) {
     const user = await this.userRepository.findOneByUsername(username).catch(() => {
@@ -89,7 +92,7 @@ export class UserService {
       throw new Error(`User with username ${username} not found`);
     }
 
-    return user;
+    return this.cleanPassword(user);
   }
 
   /**
@@ -97,7 +100,7 @@ export class UserService {
    *
    * @param {string} id - The unique identifier of the user to be updated.
    * @param {Partial<User>} user - The updated user object.
-   * @return {Promise<User>} A promise that resolves when the update is complete.
+   * @return {Promise<UserWithoutPassword>} A promise that resolves when the update is complete.
    *
    * @throws {Error} If the user is not found.
    * @throws {Error} If any of the required fields are missing.
@@ -109,22 +112,54 @@ export class UserService {
       throw new Error("name, username or characters are required");
     }
 
-    return this.userRepository.update(id, user).catch(() => {
+    const updatedUser = await this.userRepository.update(id, user).catch(() => {
       // TODO: send this error to sentry
       throw new Error(`Error updating user with id ${id}`);
     });
+
+    return this.cleanPassword(updatedUser);
   }
 
   /**
    * Deletes a user by their unique identifier.
    *
    * @param {string} id - The unique identifier of the user to be deleted.
-   * @return {Promise<User>} A promise that resolves when the deletion is complete.
+   * @return {Promise<UserWithoutPassword>} A promise that resolves when the deletion is complete.
    */
   async delete(id) {
-    return this.userRepository.delete(id).catch(() => {
+    const user = await this.userRepository.delete(id).catch(() => {
       // TODO: send this error to sentry
       throw new Error(`Error deleting user with id ${id}`);
     });
+
+    return this.cleanPassword(user);
+  }
+
+  /**
+   * Clean password from user object
+   * @param {User} user - the user object
+   * @returns {UserWithoutPassword} the user object without the password
+   */
+  cleanPassword(user) {
+    const { password, ...rest } = user;
+    return rest;
+  }
+
+  /**
+   * Find user by username with password
+   * @param {string} username - the username
+   * @returns { Promise<User>} the user with the password
+   */
+  async findUserByUsernameWithPassword(username) {
+    const user = await this.userRepository.findOneByUsername(username).catch(() => {
+      // TODO: send this error to sentry
+      throw new Error(`Error finding user with username ${username}`);
+    });
+
+    if (!user) {
+      throw new Error(`User with username ${username} not found`);
+    }
+
+    return user;
   }
 }
