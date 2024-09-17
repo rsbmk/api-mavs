@@ -214,23 +214,27 @@ describe("findOneByUsername", () => {
 
 describe("update", () => {
   it("should successfully update user when valid id and user data are provided", async () => {
-    const userService = new UserService();
-    userService.userRepository = { update: jest.fn().mockResolvedValue(true) };
-    const id = "valid-id";
     const user = { name: "John Doe" };
+    const mockUserRepository = {
+      update: jest.fn().mockResolvedValue(user),
+    };
+    const userService = new UserService(mockUserRepository);
+    const id = "valid-id";
 
-    await expect(userService.update(id, user)).resolves.toBe(true);
-    expect(userService.userRepository.update).toHaveBeenCalledWith(id, user);
+    expect(await userService.update(id, user)).toEqual(user);
+    expect(mockUserRepository.update).toHaveBeenCalledWith(id, user);
   });
 
   it("should handle update when only name is provided", async () => {
-    const userService = new UserService();
-    userService.userRepository = { update: jest.fn().mockResolvedValue(true) };
-    const id = "valid-id";
     const user = { name: "John Doe" };
+    const mockUserRepository = {
+      update: jest.fn().mockResolvedValue(user),
+    };
+    const userService = new UserService(mockUserRepository);
+    const id = "valid-id";
 
-    await expect(userService.update(id, user)).resolves.toBe(true);
-    expect(userService.userRepository.update).toHaveBeenCalledWith(id, user);
+    expect(await userService.update(id, user)).toEqual(user);
+    expect(mockUserRepository.update).toHaveBeenCalledWith(id, user);
   });
 
   it("should throw error when id is not provided", async () => {
@@ -257,20 +261,12 @@ describe("update", () => {
 
 describe("delete", () => {
   it("should delete a user when a valid id is provided", async () => {
-    const userRepository = { delete: jest.fn().mockResolvedValue(true) };
+    const userDeleted = { id: "valid-id", name: "John Doe", username: "johndoe" };
+    const userRepository = { delete: jest.fn().mockResolvedValue(userDeleted) };
     const userService = new UserService(userRepository);
-    const id = "valid-id";
 
-    await expect(userService.delete(id)).resolves.toBe(true);
-    expect(userRepository.delete).toHaveBeenCalledWith(id);
-  });
-
-  it("should return a resolved promise when deletion is successful", async () => {
-    const userRepository = { delete: jest.fn().mockResolvedValue(true) };
-    const userService = new UserService(userRepository);
-    const id = "valid-id";
-
-    await expect(userService.delete(id)).resolves.toBe(true);
+    expect(await userService.delete(userDeleted.id)).toEqual(userDeleted);
+    expect(userRepository.delete).toHaveBeenCalledWith(userDeleted.id);
   });
 
   it("should throw an error if userRepository.delete fails", async () => {
@@ -282,11 +278,13 @@ describe("delete", () => {
   });
 
   it("should handle non-existent user id gracefully", async () => {
-    const userRepository = { delete: jest.fn().mockResolvedValue(false) };
+    const userRepository = { delete: jest.fn().mockResolvedValue({}) };
     const userService = new UserService(userRepository);
     const id = "non-existent-id";
 
-    await expect(userService.delete(id)).resolves.toBe(false);
+    expect(await userService.delete(id)).toEqual({});
+    expect(userRepository.delete).toHaveBeenCalledWith(id);
+    expect(userRepository.delete).toHaveBeenCalledTimes(1);
   });
 
   it("should throw an error if id is null or undefined", async () => {

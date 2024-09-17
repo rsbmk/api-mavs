@@ -22,7 +22,6 @@ const schema = new mongoose.Schema({
 schema.set("toJSON", {
   transform: (_document, returnedObject) => {
     returnedObject.id = returnedObject._id;
-    delete returnedObject.password;
     delete returnedObject.__v;
     delete returnedObject._id;
   },

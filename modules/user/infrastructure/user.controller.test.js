@@ -572,7 +572,6 @@ describe("Integrations - find one by id", () => {
       id: "test",
       name: "test",
       username: "test",
-      password: "test",
     };
 
     const req = {
@@ -656,7 +655,6 @@ describe("Integrations - find one by username", () => {
       id: "test",
       name: "test",
       username: "test",
-      password: "test",
     };
 
     const req = {
@@ -740,7 +738,6 @@ describe("Integrations - update user", () => {
       id: "test",
       name: "test",
       username: "test",
-      password: "test",
     };
 
     const req = {
@@ -870,7 +867,6 @@ describe("Integrations - delete user", () => {
       id: "test",
       name: "test",
       username: "test",
-      password: "test",
     };
 
     const req = {
