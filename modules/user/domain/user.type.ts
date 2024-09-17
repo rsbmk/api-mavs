@@ -10,11 +10,7 @@ export type User = {
   id: string;
 };
 
-export type CreateUserDTO = {
-  name: string;
-  username: string;
-  password: string;
-};
+export type CreateUserDTO = Pick<User, "name" | "username" | "password">;
 
 export type IUserRespository = {
   save: (user: CreateUserDTO) => Promise<User>;

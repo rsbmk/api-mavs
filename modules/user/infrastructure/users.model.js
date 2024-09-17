@@ -12,7 +12,7 @@ const schema = new mongoose.Schema({
   name: { type: String, required: true },
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  characters: { type: [String], default: [] },
+  characters: { type: [Number], default: [] },
   state: { type: Boolean, default: true },
   createAt: { type: Date, default: Date.now },
   updateAt: { type: Date, default: Date.now },
@@ -28,7 +28,5 @@ schema.set("toJSON", {
   },
 });
 
-/**
- * @type {UserModel}
- */
+/** @type {UserModel} */
 export const UserModel = mongoose.model("User", schema);
