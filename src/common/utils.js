@@ -1,13 +1,16 @@
 // @ts-check
 import { NODE_ENV } from "../common/constants.js";
+import { Exeption } from "./exeption.js";
 
 /**
- * @typedef {{
- *   buildSuccessResponse: (message: string, data: any) => {},
- *   buildErrorResponse: (message: string) => {},
- * }} IUtils
+ * @typedef {import('./utils.type').IUtils} IUtils
+ * @typedef {import('express').Response} Response
  */
 
+/**
+ * @class Utils
+ * @implements {IUtils}
+ */
 export class Utils {
   isDevelopment = NODE_ENV === "development";
   /**
@@ -27,14 +30,20 @@ export class Utils {
 
   /**
    * Build error response
-   * @param {string} message - The message to respond client
+   * @param {Error} error - The error to respond client
+   * @param {Response} response - The response object
    * @returns The error response
    */
-  buildErrorResponse(message) {
+  buildErrorResponse(error, response) {
+    let message = "Internal server error";
+    let status = 500;
+
+    if (error instanceof Exeption) {
+      message = error.message;
+      status = error.status;
+    }
+
     if (this.isDevelopment) console.error(`[ERROR] ${message}`);
-    return {
-      success: false,
-      message,
-    };
+    return response.status(status).json({ success: false, message, status });
   }
 }
