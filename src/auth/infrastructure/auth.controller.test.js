@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 import { AuthService } from "../application/auth.service.js";
 import { AuthController } from "./auth.controller.js";
-import { EXPIRATION_JWT, SECRET_JWT } from "../../utils/constants.js";
+import { EXPIRATION_JWT, SECRET_JWT } from "../../common/constants.js";
 
 describe("Integrations - AuthController", () => {
   afterEach(() => {

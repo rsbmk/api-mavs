@@ -3,14 +3,14 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-import { EXPIRATION_JWT, SECRET_JWT } from "../../utils/constants.js";
+import { EXPIRATION_JWT, SECRET_JWT } from "../../common/constants.js";
 
 /**
- * @typedef {import('../../user/domain/user.type').IUserService} IUserService
- * @typedef {import('../../user/domain/user.type').User} User
- * @typedef {import('../domain/login.type').Credentials} Credentials
- * @typedef {import('../domain/login.type').UserLogin} UserLogin
- * @typedef {import('../domain/login.type').IAuthService} IAuthService
+ * @typedef {import('../../user/domain/user.type.js').IUserService} IUserService
+ * @typedef {import('../../user/domain/user.type.js').User} User
+ * @typedef {import('../domain/login.type.js').Credentials} Credentials
+ * @typedef {import('../domain/login.type.js').UserLogin} UserLogin
+ * @typedef {import('../domain/login.type.js').IAuthService} IAuthService
  */
 
 /**
