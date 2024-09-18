@@ -42,3 +42,8 @@ Este proyecto demuestra mi capacidad para comprender y aplicar conceptos clave e
     $ npm start
 ```
 
+
+TODO
+- Extract the jwtwebtoken lib in a JWT services domain with a interface and use it
+- Create a userExtractor service middleware
+- Create custom exections and deprecate `handleErrors.js`
