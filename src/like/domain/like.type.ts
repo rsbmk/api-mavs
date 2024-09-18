@@ -21,7 +21,7 @@ export type ILikeService = {
   create: (like: CreateLikeDTO) => Promise<Like>;
   findAllByCharacterId: (characterId: number) => Promise<Like[]>;
   findAllByUserId: (userId: string) => Promise<Like[]>;
-  delete: (id: string) => Promise<Like>;
+  delete: (id: string) => Promise<Like | null>;
 };
 
 export type ILikeModel = {
