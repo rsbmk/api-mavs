@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { MONGO_DB_URI } from "../modules/utils/constants.js";
+import { MONGO_DB_URI } from "../src/common/constants.js";
 
 // conexion a la mongodb
 mongoose

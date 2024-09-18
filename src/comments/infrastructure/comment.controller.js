@@ -1,6 +1,6 @@
 // @ts-check
 
-import { Utils } from "../../utils/utils.js";
+import { Utils } from "../../common/utils.js";
 
 /**
  * @typedef {import('../domain/commnet.type.js').Comment} Comment
