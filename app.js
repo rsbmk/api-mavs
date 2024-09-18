@@ -7,7 +7,6 @@ import express from "express";
 
 // middlewares
 import { notFound } from "./src/middleware/notFound.js";
-import { handleErrors } from "./src/middleware/handleErrors.js";
 
 // routes
 import { userRouter } from "./src/user/infrastructure/user.route.js";
@@ -37,6 +36,5 @@ app.use("/v1/api/likes", likeRouter);
 
 // midelware low
 app.use(notFound);
-app.use(handleErrors);
 
 export default app;
