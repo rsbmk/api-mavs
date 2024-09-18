@@ -8,6 +8,7 @@
  */
 
 import { EXPIRATION_JWT, SECRET_JWT } from "../../../common/constants.js";
+import { TokenDataRequired, TokenRequired } from "../domain/jwt.exeptions.js";
 
 /**
  * @class JwtService
@@ -33,7 +34,7 @@ export class JwtService {
    * @returns {DecodeToken} the token
    */
   verify(token) {
-    if (!token) throw new Error("The token is required");
+    if (!token) throw new TokenRequired();
     return this.jwt.verify(token, SECRET_JWT);
   }
 
@@ -43,8 +44,8 @@ export class JwtService {
    * @returns {string} the token
    */
   sign(token) {
-    if (!token) throw new Error("The token is required");
-    if (!token.id) throw new Error("The token data is required");
+    if (!token) throw new TokenRequired();
+    if (!token.id) throw new TokenDataRequired();
     return this.jwt.sign(token, SECRET_JWT, { expiresIn: EXPIRATION_JWT });
   }
 }
