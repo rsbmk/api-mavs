@@ -39,7 +39,7 @@ export class CommentController {
       const comment = await this.commentService.create(userId, req.body);
       res.status(201).json(this.utils.buildSuccessResponse("comment created", comment));
     } catch (error) {
-      res.status(400).json(this.utils.buildErrorResponse(error.message));
+      this.utils.buildErrorResponse(error, res);
     }
   }
 
@@ -54,7 +54,7 @@ export class CommentController {
       const comments = await this.commentService.findAllByCharacterId(+characterId);
       res.status(200).json(this.utils.buildSuccessResponse("comments found", comments));
     } catch (error) {
-      res.status(404).json(this.utils.buildErrorResponse(error.message));
+      this.utils.buildErrorResponse(error, res);
     }
   }
 
@@ -69,7 +69,7 @@ export class CommentController {
       const comments = await this.commentService.findAllByUserId(userId);
       res.status(200).json(this.utils.buildSuccessResponse("comments found", comments));
     } catch (error) {
-      res.status(404).json(this.utils.buildErrorResponse(error.message));
+      this.utils.buildErrorResponse(error, res);
     }
   }
 
@@ -84,7 +84,7 @@ export class CommentController {
       const comment = await this.commentService.update(id, req.body);
       res.status(200).json(this.utils.buildSuccessResponse("comment updated", comment));
     } catch (error) {
-      res.status(404).json(this.utils.buildErrorResponse(error.message));
+      this.utils.buildErrorResponse(error, res);
     }
   }
 
@@ -99,7 +99,7 @@ export class CommentController {
       const comment = await this.commentService.delete(id);
       res.status(200).json(this.utils.buildSuccessResponse("comment deleted", comment));
     } catch (error) {
-      res.status(404).json(this.utils.buildErrorResponse(error.message));
+      this.utils.buildErrorResponse(error, res);
     }
   }
 }

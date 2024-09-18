@@ -1,5 +1,7 @@
 // @ts-check
 
+import { CharacterIdRequired, CommentDataRequired, CommentRequiered, TransactionFailed, UserIdRequired } from "../domain/comment.exeptions.js";
+
 /**
  * @typedef {import('../domain/commnet.type.js').Comment} Comment
  * @typedef {import('../domain/commnet.type.js').CreateCommentDTO} CreateCommentDTO
@@ -33,13 +35,13 @@ export class CommentService {
    * @returns {Promise<Comment>} A promise that resolves to the saved comment.
    */
   create(userId, data) {
-    if (!userId) throw new Error("userId is required");
+    if (!userId) throw new UserIdRequired();
 
     const { comment, characterId } = data;
-    if (!(characterId && comment)) throw new Error("characterId and comment is required");
+    if (!(characterId && comment)) throw new CommentDataRequired();
 
     return this.commentRepository.create({ characterId, comment, userId }).catch(() => {
-      throw new Error("Failed to save comment");
+      throw new TransactionFailed();
     });
   }
 
@@ -49,9 +51,9 @@ export class CommentService {
    * @returns {Promise<Comment[]>} A promise that resolves to an array of comments.
    */
   findAllByCharacterId(characterId) {
-    if (!characterId) throw new Error("characterId is required");
+    if (!characterId) throw new CharacterIdRequired();
     return this.commentRepository.findAllByCharacterId(characterId).catch(() => {
-      throw new Error("Failed to find comments");
+      throw new TransactionFailed();
     });
   }
 
@@ -61,9 +63,9 @@ export class CommentService {
    * @returns {Promise<Comment[]>} A promise that resolves to an array of comments.
    */
   findAllByUserId(userId) {
-    if (!userId) throw new Error("userId is required");
+    if (!userId) throw new UserIdRequired();
     return this.commentRepository.findAllByUserId(userId).catch(() => {
-      throw new Error("Failed to find comments");
+      throw new TransactionFailed();
     });
   }
 
@@ -74,13 +76,13 @@ export class CommentService {
    * @returns {Promise<Comment | null>} A promise that resolves to the updated comment or null if not found.
    */
   update(id, data) {
-    if (!id) throw new Error("id is required");
+    if (!id) throw new UserIdRequired();
 
     const { comment } = data;
-    if (!comment) throw new Error("comment is required");
+    if (!comment) throw new CommentRequiered();
 
     return this.commentRepository.update(id, { comment, updateAt: new Date() }).catch(() => {
-      throw new Error("Failed to update comment");
+      throw new TransactionFailed();
     });
   }
 
@@ -90,9 +92,9 @@ export class CommentService {
    * @returns {Promise<Comment | null>} A promise that resolves to the deleted comment.
    */
   delete(id) {
-    if (!id) throw new Error("id is required");
+    if (!id) throw new UserIdRequired();
     return this.commentRepository.update(id, { state: false, deleteAt: new Date() }).catch(() => {
-      throw new Error("Failed to delete comment");
+      throw new TransactionFailed();
     });
   }
 }
