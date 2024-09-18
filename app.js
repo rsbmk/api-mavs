@@ -14,8 +14,6 @@ import { commentRouter } from "./modules/comments/infrastructure/comment.route.j
 import { loginRouter } from "./modules/login/infrastructure/login.route.js";
 import { likeRouter } from "./modules/like/infrastructura/like.route.js";
 
-import characterRouter from "./controllers/likes.js"; // deprecated route
-
 const app = express();
 
 // settings
@@ -35,9 +33,6 @@ app.use("/v1/api/users", userRouter);
 app.use("/v1/api/comments", jwtMiddleware, commentRouter);
 app.use("/v1/api/login", loginRouter);
 app.use("/v1/api/likes", jwtMiddleware, likeRouter);
-
-// deprecated route
-app.use("/v1/api/characters", jwtMiddleware, characterRouter);
 
 // midelware low
 app.use(notFound);
