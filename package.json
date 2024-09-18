@@ -8,7 +8,8 @@
     "dev": "node --watch -r dotenv/config server.js",
     "start": "node -r dotenv/config server.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll"
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage"
   },
   "keywords": [],
   "author": "Roberto Bocio Melo",
@@ -34,6 +35,21 @@
   "jest": {
     "testEnvironment": "node",
     "transform": {},
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "\\.ts$",
+      "\\injections.js$",
+      "\\model.js$",
+      "\\.route.js$"
+    ],
+    "collectCoverageFrom": [
+      "./src/**"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "lines": 90
+      }
+    },
     "setupFiles": [
       "<rootDir>/test-setup.js"
     ]
