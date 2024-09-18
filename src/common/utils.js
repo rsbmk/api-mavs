@@ -1,5 +1,5 @@
 // @ts-check
-import { NODE_ENV } from "../utils/constants.js";
+import { NODE_ENV } from "../common/constants.js";
 
 /**
  * @typedef {{
