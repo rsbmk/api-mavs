@@ -23,7 +23,7 @@ export type ICommentService = {
   findAllByCharacterId: (characterId: number) => Promise<Comment[]>;
   findAllByUserId: (userId: string) => Promise<Comment[]>;
   update: (id: string, comment: Partial<Comment>) => Promise<Comment | null>;
-  delete: (id: string) => Promise<Comment>;
+  delete: (id: string) => Promise<Comment | null>;
 };
 
 export type ICommentModel = {

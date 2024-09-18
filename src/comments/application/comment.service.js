@@ -71,7 +71,7 @@ export class CommentService {
    * Updates a comment in the database.
    * @param {string} id - The id of the comment.
    * @param {Partial<Comment>} data - The comment object to be updated.
-   * @returns {Promise<Comment>} A promise that resolves to the updated comment or null if not found.
+   * @returns {Promise<Comment | null>} A promise that resolves to the updated comment or null if not found.
    */
   update(id, data) {
     if (!id) throw new Error("id is required");
@@ -87,7 +87,7 @@ export class CommentService {
   /**
    * Deletes a comment from the database.
    * @param {string} id - The id of the comment.
-   * @returns {Promise<Comment>} A promise that resolves to the deleted comment.
+   * @returns {Promise<Comment | null>} A promise that resolves to the deleted comment.
    */
   delete(id) {
     if (!id) throw new Error("id is required");
