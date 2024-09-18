@@ -5,14 +5,16 @@ import "./dbConnection/mongo.js"; // conexion to the database
 import cors from "cors";
 import express from "express";
 
-import { notFound } from "./middleware/notFound.js";
-import { handleErrors } from "./middleware/handleErrors.js";
-import { jwtMiddleware } from "./middleware/userExtractor.js";
+// middlewares
+import { notFound } from "./src/middleware/notFound.js";
+import { handleErrors } from "./src/middleware/handleErrors.js";
+import { jwtMiddleware } from "./src/middleware/userExtractor.js";
 
-import { userRouter } from "./modules/user/infrastructure/user.route.js";
-import { commentRouter } from "./modules/comments/infrastructure/comment.route.js";
-import { loginRouter } from "./modules/login/infrastructure/login.route.js";
-import { likeRouter } from "./modules/like/infrastructura/like.route.js";
+// routes
+import { userRouter } from "./src/user/infrastructure/user.route.js";
+import { commentRouter } from "./src/comments/infrastructure/comment.route.js";
+import { loginRouter } from "./src/login/infrastructure/login.route.js";
+import { likeRouter } from "./src/like/infrastructura/like.route.js";
 
 const app = express();
 
