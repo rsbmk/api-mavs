@@ -4,8 +4,13 @@
  * @typedef {import('../domain/user.type.js').User} User
  * @typedef {import('../domain/user.type.js').CreateUserDTO} CreateUserDTO
  * @typedef {import('../domain/user.type.js').IUserModel} IUserModel
+ * @typedef {import('../domain/user.type.js').IUserRespository} IUserRespository
  */
 
+/**
+ * @class UserRepository
+ * @implements {IUserRespository}
+ */
 export class UserRepository {
   /**
    * @type {IUserModel}

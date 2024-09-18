@@ -7,8 +7,13 @@ import bcrypt from "bcrypt";
  * @typedef {import('../domain/user.type.js').UserWithoutPassword} UserWithoutPassword
  * @typedef {import('../domain/user.type.js').CreateUserDTO} CreateUserDTO
  * @typedef {import('../domain/user.type.js').IUserRespository} IUserRespository
+ * @typedef {import('../domain/user.type.js').IUserService} IUserService
  */
 
+/**
+ * @class UserService
+ * @extends {IUserService}
+ */
 export class UserService {
   /**
    * User Repository

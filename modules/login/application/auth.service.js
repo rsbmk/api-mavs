@@ -10,8 +10,13 @@ import { EXPIRATION_JWT, SECRET_JWT } from "../../utils/constants.js";
  * @typedef {import('../../user/domain/user.type').User} User
  * @typedef {import('../domain/login.type').Credentials} Credentials
  * @typedef {import('../domain/login.type').UserLogin} UserLogin
+ * @typedef {import('../domain/login.type').IAuthService} IAuthService
  */
 
+/**
+ * @class AuthService
+ * @implements {IAuthService}
+ */
 export class AuthService {
   /**
    * @type {IUserService}

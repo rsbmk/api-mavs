@@ -4,16 +4,14 @@
  * @typedef {import('../domain/commnet.type.js').Comment} Comment
  * @typedef {import('../domain/commnet.type.js').CreateCommentDTO} CreateCommentDTO
  * @typedef {import('../domain/commnet.type.js').ICommentRespository} ICommentRepository
+ * @typedef {import('../domain/commnet.type.js').ICommentService} ICommentService
  * @typedef {import('../../user/domain/user.type.js').IUserService} IUserService
  */
 
 /**
-  save: (comment: CreateCommentDTO) => Promise<Comment>;
-  findAllByCharacterId: (characterId: number) => Promise<Comment[]>;
-  findAllByUserId: (userId: string) => Promise<Comment[]>;
-  update: (id: string, comment: Partial<Comment>) => Promise<Comment | null>;
+ * @class CommentService
+ * @implements {ICommentService}
  */
-
 export class CommentService {
   /**
    * @type {ICommentRepository}

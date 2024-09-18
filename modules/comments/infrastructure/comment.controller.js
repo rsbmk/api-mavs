@@ -10,6 +10,9 @@ import { Utils } from "../../utils/index.js";
  * @typedef {import('express').Response} Response
  */
 
+/**
+ * @class CommentController
+ */
 export class CommentController {
   /**
    * @type {ICommentService}

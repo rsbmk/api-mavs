@@ -4,8 +4,13 @@
  * @typedef {import('../domain/commnet.type.js').Comment} IComment
  * @typedef {import('../domain/commnet.type.js').CreateCommentDTO} CreateCommentDTO
  * @typedef {import('../domain/commnet.type.js').ICommentModel} ICommentModel
+ * @typedef {import('../domain/commnet.type.js').ICommentRespository} ICommentRespository
  */
 
+/**
+ * @class CommentRepository
+ * @implements {ICommentRespository}
+ */
 export class CommentRepository {
   /**
    * @type {ICommentModel}
