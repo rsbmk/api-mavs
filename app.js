@@ -8,12 +8,11 @@ import express from "express";
 // middlewares
 import { notFound } from "./src/middleware/notFound.js";
 import { handleErrors } from "./src/middleware/handleErrors.js";
-import { jwtMiddleware } from "./src/middleware/userExtractor.js";
 
 // routes
 import { userRouter } from "./src/user/infrastructure/user.route.js";
 import { commentRouter } from "./src/comments/infrastructure/comment.route.js";
-import { loginRouter } from "./src/login/infrastructure/login.route.js";
+import { loginRouter } from "./src/auth/infrastructure/login.route.js";
 import { likeRouter } from "./src/like/infrastructura/like.route.js";
 
 const app = express();
@@ -32,9 +31,9 @@ app.use("/status", (req, res) => {
 
 // routers
 app.use("/v1/api/users", userRouter);
-app.use("/v1/api/comments", jwtMiddleware, commentRouter);
+app.use("/v1/api/comments", commentRouter);
 app.use("/v1/api/login", loginRouter);
-app.use("/v1/api/likes", jwtMiddleware, likeRouter);
+app.use("/v1/api/likes", likeRouter);
 
 // midelware low
 app.use(notFound);
