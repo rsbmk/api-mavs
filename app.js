@@ -12,7 +12,9 @@ import { jwtMiddleware } from "./middleware/userExtractor.js";
 import { userRouter } from "./modules/user/infrastructure/user.route.js";
 import { commentRouter } from "./modules/comments/infrastructure/comment.route.js";
 import { loginRouter } from "./modules/login/infrastructure/login.route.js";
-import characterRouter from "./controllers/likes.js";
+import { likeRouter } from "./modules/like/infrastructura/like.route.js";
+
+import characterRouter from "./controllers/likes.js"; // deprecated route
 
 const app = express();
 
@@ -31,8 +33,10 @@ app.use("/status", (req, res) => {
 // routers
 app.use("/v1/api/users", userRouter);
 app.use("/v1/api/comments", jwtMiddleware, commentRouter);
-
 app.use("/v1/api/login", loginRouter);
+app.use("/v1/api/likes", jwtMiddleware, likeRouter);
+
+// deprecated route
 app.use("/v1/api/characters", jwtMiddleware, characterRouter);
 
 // midelware low
