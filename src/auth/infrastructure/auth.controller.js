@@ -31,7 +31,7 @@ export class AuthController {
       const user = await this.authService.login(req.body);
       res.status(200).json(this.utils.buildSuccessResponse("user loged", user));
     } catch (error) {
-      res.status(400).json(this.utils.buildErrorResponse(error.message));
+      this.utils.buildErrorResponse(error, res);
     }
   }
 }

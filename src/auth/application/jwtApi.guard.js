@@ -2,6 +2,7 @@
 
 import { BEARER_LENGTH } from "../../common/constants.js";
 import { Utils } from "../../common/utils.js";
+import { InvalidCredentials } from "../domain/auth.exeptions.js";
 
 /**
  * @typedef {import('../../libs/jwt/domain/jwt.type.js').IJWTService} IJWTService
@@ -37,7 +38,7 @@ export class JwtApiGuard {
   run(req, res, next) {
     const authorization = req.get("authorization");
     if (!authorization) {
-      return res.status(401).json(this.utils.buildErrorResponse("no authorization"));
+      return this.utils.buildErrorResponse(new InvalidCredentials(), res);
     }
 
     const token = authorization.substring(BEARER_LENGTH);
