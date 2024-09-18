@@ -50,7 +50,6 @@ export class CommentService {
    */
   findAllByCharacterId(characterId) {
     if (!characterId) throw new Error("characterId is required");
-    if (isNaN(characterId)) throw new Error("characterId must be a number");
     return this.commentRepository.findAllByCharacterId(characterId).catch(() => {
       throw new Error("Failed to find comments");
     });

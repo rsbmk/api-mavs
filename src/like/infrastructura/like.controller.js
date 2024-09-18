@@ -1,6 +1,6 @@
 // @ts-check
 
-import { Utils } from "../../utils";
+import { Utils } from "../../utils/utils.js";
 
 /**
  * @typedef {import('../domain/like.type').CreateLikeDTO} CreateLikeDTO

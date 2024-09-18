@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { likeController } from "../infrastructura/like.injection.js";
+import { likeController } from "./like.injections.js";
 
 export const likeRouter = Router();
 

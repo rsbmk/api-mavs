@@ -467,6 +467,152 @@ describe("Integration - comments controller - findAllByUserId", () => {
   });
 });
 
+describe("Integration - comments controller - update", () => {
+  it("should update a comment", async () => {
+    const updatedComment = {
+      characterId: 30,
+      comment: "This is a comment",
+      userId: "userId-test",
+      state: true,
+      deleteAt: null,
+      createAt: "2024-09-17T04:03:27.539Z",
+      updateAt: "2024-09-17T04:03:27.539Z",
+      id: "comment-id",
+    };
+
+    const commentModel = {
+      create: jest.fn(),
+      find: jest.fn(),
+      findByIdAndUpdate: jest.fn().mockResolvedValue(updatedComment),
+    };
+
+    const commentController = new CommentController(new CommentService(new CommentRepository(commentModel)));
+
+    const req = {
+      params: {
+        id: "comment-id",
+      },
+      body: {
+        comment: "This is a comment",
+      },
+    };
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await commentController.update(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      success: true,
+      message: "comment updated",
+      data: updatedComment,
+    });
+    expect(commentModel.findByIdAndUpdate).toHaveBeenCalled();
+  });
+
+  it("should return an error if the comment id is not provided", async () => {
+    const commentModel = {
+      create: jest.fn(),
+      find: jest.fn(),
+      findByIdAndUpdate: jest.fn(),
+    };
+
+    const commentController = new CommentController(new CommentService(new CommentRepository(commentModel)));
+
+    const req = {
+      params: {
+        id: null,
+      },
+      body: {
+        comment: "This is a comment",
+      },
+    };
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await commentController.update(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "id is required",
+    });
+    expect(commentModel.findByIdAndUpdate).not.toHaveBeenCalled();
+  });
+
+  it("should return an error if the comment is not provided", async () => {
+    const commentModel = {
+      create: jest.fn(),
+      find: jest.fn(),
+      findByIdAndUpdate: jest.fn(),
+    };
+
+    const commentController = new CommentController(new CommentService(new CommentRepository(commentModel)));
+
+    const req = {
+      params: {
+        id: "comment-id",
+      },
+      body: {
+        comment: null,
+      },
+    };
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await commentController.update(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "comment is required",
+    });
+    expect(commentModel.findByIdAndUpdate).not.toHaveBeenCalled();
+  });
+
+  it("should return an error if comment repository throws an error", async () => {
+    const commentModel = {
+      create: jest.fn(),
+      find: jest.fn(),
+      findByIdAndUpdate: jest.fn().mockRejectedValue(new Error()),
+    };
+
+    const commentController = new CommentController(new CommentService(new CommentRepository(commentModel)));
+
+    const req = {
+      params: {
+        id: "comment-id",
+      },
+      body: {
+        comment: "This is a comment",
+      },
+    };
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await commentController.update(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "Failed to update comment",
+    });
+    expect(commentModel.findByIdAndUpdate).toHaveBeenCalled();
+  });
+});
+
 describe("Integration - comments controller - delete", () => {
   it("should delete a comment", async () => {
     const deletedComment = {

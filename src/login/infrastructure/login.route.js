@@ -1,7 +1,7 @@
 // @ts-check
 
 import { Router } from "express";
-import { authController } from "./auth.injection.js";
+import { authController } from "./auth.injections.js";
 
 export const loginRouter = Router();
 
