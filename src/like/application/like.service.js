@@ -1,5 +1,7 @@
 // @ts-check
 
+import { CommentIdRequired, CreateLikeFailed, DeleteLikeFailed, FindLikeFailed, LikeAlreadyExists, LikeDataRequiered } from "../domain/like.exeptions";
+
 /**
  * @typedef {import('../domain/like.type').CreateLikeDTO} CreateLikeDTO
  * @typedef {import('../domain/like.type').FindFilter} FindFilter
@@ -36,14 +38,14 @@ export class LikeService {
    */
   async create(like) {
     const { characterId, userId } = like;
-    if (!characterId || !userId) throw new Error("characterId and userId are required");
+    if (!characterId || !userId) throw new LikeDataRequiered();
 
     const likeExist = await this.userRepository.find({ characterId, userId });
-    if (likeExist.length) throw new Error("Like already exists");
+    if (likeExist.length) throw new LikeAlreadyExists();
 
     return this.userRepository.create(like).catch(() => {
       // TODO: send error to sentry
-      throw new Error(`Error creating like, for characterId: ${characterId} and userId: ${userId}`);
+      throw new CreateLikeFailed(characterId, userId);
     });
   }
 
@@ -58,7 +60,7 @@ export class LikeService {
     if (!characterId) throw new Error("characterId is required");
     return this.userRepository.find({ characterId }).catch(() => {
       // TODO: send error to sentry
-      throw new Error(`Error finding likes, for characterId: ${characterId}`);
+      throw new FindLikeFailed("characterId", characterId);
     });
   }
 
@@ -73,7 +75,7 @@ export class LikeService {
     if (!userId) throw new Error("userId is required");
     return this.userRepository.find({ userId }).catch(() => {
       // TODO: send error to sentry
-      throw new Error(`Error finding likes, for userId: ${userId}`);
+      throw new FindLikeFailed("userId", userId);
     });
   }
 
@@ -83,10 +85,10 @@ export class LikeService {
    * @returns {Promise<Like | null>} Like deleted
    */
   delete(id) {
-    if (!id) throw new Error("id is required");
+    if (!id) throw new CommentIdRequired();
     return this.userRepository.update(id, { state: false, deleteAt: new Date() }).catch(() => {
       // TODO: send error to sentry
-      throw new Error(`Error deleting like, for id: ${id}`);
+      throw new DeleteLikeFailed(id);
     });
   }
 }

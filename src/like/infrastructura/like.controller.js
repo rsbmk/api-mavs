@@ -34,7 +34,7 @@ export class LikeController {
       const like = await this.likeService.create(req.body);
       res.status(201).json(this.utils.buildSuccessResponse("Like created", like));
     } catch (error) {
-      res.status(400).json(this.utils.buildErrorResponse(error.message));
+      this.utils.buildErrorResponse(error, res);
     }
   }
 
@@ -49,7 +49,7 @@ export class LikeController {
       const likes = await this.likeService.findAllByCharacterId(+characterId);
       res.status(200).json(this.utils.buildSuccessResponse("Likes found", likes));
     } catch (error) {
-      res.status(400).json(this.utils.buildErrorResponse(error.message));
+      this.utils.buildErrorResponse(error, res);
     }
   }
 
@@ -64,7 +64,7 @@ export class LikeController {
       const likes = await this.likeService.findAllByUserId(userId);
       res.status(200).json(this.utils.buildSuccessResponse("Likes found", likes));
     } catch (error) {
-      res.status(400).json(this.utils.buildErrorResponse(error.message));
+      this.utils.buildErrorResponse(error, res);
     }
   }
 
@@ -79,7 +79,7 @@ export class LikeController {
       const like = await this.likeService.delete(id);
       res.status(200).json(this.utils.buildSuccessResponse("Like deleted", like));
     } catch (error) {
-      res.status(400).json(this.utils.buildErrorResponse(error.message));
+      this.utils.buildErrorResponse(error, res);
     }
   }
 }
