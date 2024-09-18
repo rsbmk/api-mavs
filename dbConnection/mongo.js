@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import { MONGO_DB_URI } from "../src/common/constants.js";
 
-// conexion a la mongodb
 mongoose
   .connect(MONGO_DB_URI)
   .then(() => {
@@ -11,7 +10,7 @@ mongoose
     console.error("❌ Error connecting to database: ", err);
   });
 
-// cerrar el servidor cuando haya un error
+// disconnect mongoose connection on process exit
 process.on("uncaughtException", (error) => {
   console.error(error);
   mongoose.disconnect();
