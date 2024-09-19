@@ -1,6 +1,7 @@
 // @ts-check
 
 import bcrypt from "bcrypt";
+import { FailedlUser, UserAlreadyExists, UserDataRequired, UserNotFound } from "../domain/user.exeptions.js";
 
 /**
  * @typedef {import('../domain/user.type.js').User} User
@@ -41,21 +42,17 @@ export class UserService {
    */
   async create(user) {
     const { username, name, password } = user;
-    if (!username || !name || !password) {
-      throw new Error("username, password and name are required");
-    }
+    if (!username || !name || !password) throw new UserDataRequired();
 
     const isUsernameExist = await this.userRepository.findOneByUsername(username);
-    if (isUsernameExist) {
-      throw new Error(`The username ${username} already exists`);
-    }
+    if (isUsernameExist) throw new UserAlreadyExists(username);
 
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
     const userCreated = await this.userRepository.save({ name, username, password: passwordHash }).catch(() => {
       // TODO: send this error to sentry
-      throw new Error(`Error saving user: ${user.username}`);
+      throw new FailedlUser(username);
     });
 
     return this.cleanPassword(userCreated);
@@ -70,15 +67,14 @@ export class UserService {
    * @throws {Error} If the user is not found.
    */
   async findOneById(id) {
+    if (!id) throw new UserDataRequired();
+
     const user = await this.userRepository.findById(id).catch(() => {
       // TODO: send this error to sentry
-      throw new Error(`Error finding user with id ${id}`);
+      throw new FailedlUser(id);
     });
 
-    if (!user) {
-      throw new Error(`User with id ${id} not found`);
-    }
-
+    if (!user) throw new UserNotFound();
     return this.cleanPassword(user);
   }
 
@@ -88,15 +84,14 @@ export class UserService {
    * @returns {Promise<UserWithoutPassword>} The user object if found, otherwise null.
    */
   async findOneByUsername(username) {
+    if (!username) throw new UserDataRequired();
+
     const user = await this.userRepository.findOneByUsername(username).catch(() => {
       // TODO: send this error to sentry
-      throw new Error(`Error finding user with username ${username}`);
+      throw new FailedlUser(username);
     });
 
-    if (!user) {
-      throw new Error(`User with username ${username} not found`);
-    }
-
+    if (!user) throw new UserNotFound();
     return this.cleanPassword(user);
   }
 
@@ -111,21 +106,15 @@ export class UserService {
    * @throws {Error} If any of the required fields are missing.
    */
   async update(id, user) {
-    if (!id) throw new Error("id is required");
-
-    if (!(user?.name || user?.username || user?.characters)) {
-      throw new Error("name, username or characters are required");
-    }
+    if (!id) throw new UserDataRequired();
+    if (!(user?.name || user?.username || user?.characters)) throw new UserDataRequired();
 
     const updatedUser = await this.userRepository.update(id, user).catch(() => {
       // TODO: send this error to sentry
-      throw new Error(`Error updating user with id ${id}`);
+      throw new FailedlUser(id);
     });
 
-    if (!updatedUser) {
-      throw new Error(`User with id ${id} not found`);
-    }
-
+    if (!updatedUser) throw new UserNotFound();
     return this.cleanPassword(updatedUser);
   }
 
@@ -136,9 +125,10 @@ export class UserService {
    * @return {Promise<UserWithoutPassword>} A promise that resolves when the deletion is complete.
    */
   async delete(id) {
+    if (!id) throw new UserDataRequired();
     const user = await this.userRepository.delete(id).catch(() => {
       // TODO: send this error to sentry
-      throw new Error(`Error deleting user with id ${id}`);
+      throw new FailedlUser(id);
     });
 
     return this.cleanPassword(user);
@@ -161,15 +151,13 @@ export class UserService {
    * @returns { Promise<User>} the user with the password
    */
   async findUserByUsernameWithPassword(username) {
+    if (!username) throw new UserDataRequired();
     const user = await this.userRepository.findOneByUsername(username).catch(() => {
       // TODO: send this error to sentry
-      throw new Error(`Error finding user with username ${username}`);
+      throw new FailedlUser(username);
     });
 
-    if (!user) {
-      throw new Error(`User with username ${username} not found`);
-    }
-
+    if (!user) throw new UserNotFound();
     return user;
   }
 }
