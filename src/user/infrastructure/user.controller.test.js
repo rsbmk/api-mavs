@@ -504,8 +504,8 @@ describe("Integrations - create user", () => {
     };
 
     await userController.create(req, res);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
-    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "The username test already exists", status: 400 });
+    expect(res.status).toHaveBeenCalledWith(400);
     expect(userModel.findOne).toHaveBeenCalledWith({ state: true, username: "test" });
   });
 
@@ -531,8 +531,8 @@ describe("Integrations - create user", () => {
 
     await userController.create(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "The user information is required", status: 400 });
     expect(userModel.create).not.toHaveBeenCalled();
   });
 
@@ -560,8 +560,8 @@ describe("Integrations - create user", () => {
 
     await userController.create(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Error processing user: test", status: 400 });
     expect(userModel.create).toHaveBeenCalled();
   });
 });
@@ -619,8 +619,8 @@ describe("Integrations - find one by id", () => {
     await userController.findOneById(req, res);
 
     expect(userModel.findOne).toHaveBeenCalledWith({ _id: req.params.id, state: true });
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: `Error processing user: ${req.params.id}`, status: 400 });
   });
 
   it("should return an error message if the user already exists", async () => {
@@ -644,8 +644,8 @@ describe("Integrations - find one by id", () => {
     await userController.findOneById(req, res);
 
     expect(userModel.findOne).toHaveBeenCalledWith({ _id: req.params.id, state: true });
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "The user not found", status: 404 });
   });
 });
 
@@ -702,8 +702,8 @@ describe("Integrations - find one by username", () => {
     await userController.findOneByUsername(req, res);
 
     expect(userModel.findOne).toHaveBeenCalledWith({ username: req.params.username, state: true });
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: `Error processing user: ${req.params.username}`, status: 400 });
   });
 
   it("should return an error message if the user already exists", async () => {
@@ -727,8 +727,8 @@ describe("Integrations - find one by username", () => {
     await userController.findOneByUsername(req, res);
 
     expect(userModel.findOne).toHaveBeenCalledWith({ username: req.params.username, state: true });
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "The user not found", status: 404 });
   });
 });
 
@@ -795,8 +795,8 @@ describe("Integrations - update user", () => {
     await userController.update(req, res);
 
     expect(userModel.findByIdAndUpdate).not.toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "The user information is required", status: 400 });
   });
 
   it("should return an error message if the user is not valid", async () => {
@@ -825,8 +825,8 @@ describe("Integrations - update user", () => {
     await userController.update(req, res);
 
     expect(userModel.findByIdAndUpdate).not.toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "The user information is required", status: 400 });
   });
 
   it("should return an error message if the user repository throws an error", async () => {
@@ -856,8 +856,8 @@ describe("Integrations - update user", () => {
 
     // validate that have been called only with name, username and password
     expect(userModel.findByIdAndUpdate).toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: `Error processing user: ${req.params.id}`, status: 400 });
   });
 });
 
@@ -914,7 +914,7 @@ describe("Integrations - delete user", () => {
     await userController.delete(req, res);
 
     expect(userModel.findByIdAndUpdate).toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Error processing user: test", status: 400 });
   });
 });

@@ -43,7 +43,7 @@ describe("create", () => {
     const userService = new UserService(mockUserRepository);
     const user = { name: "Test User", password: "password123" };
 
-    await expect(userService.create(user)).rejects.toThrow("username, password and name are required");
+    await expect(userService.create(user)).rejects.toThrow("The user information is required");
   });
 
   it("should throw an error when name is missing", async () => {
@@ -54,7 +54,7 @@ describe("create", () => {
     const userService = new UserService(mockUserRepository);
     const user = { username: "testuser", password: "password123" };
 
-    await expect(userService.create(user)).rejects.toThrow("username, password and name are required");
+    await expect(userService.create(user)).rejects.toThrow("The user information is required");
   });
 });
 
@@ -88,7 +88,7 @@ describe("findOneById", () => {
     };
 
     const userService = new UserService(mockUserRepository);
-    await expect(userService.findOneById("3")).rejects.toThrow("User with id 3 not found");
+    await expect(userService.findOneById("3")).rejects.toThrow("The user not found");
   });
 
   it("should throw error if repository findById method fails", async () => {
@@ -97,7 +97,7 @@ describe("findOneById", () => {
     };
 
     const userService = new UserService(mockUserRepository);
-    await expect(userService.findOneById("4")).rejects.toThrow("Error finding user with id 4");
+    await expect(userService.findOneById("4")).rejects.toThrow("Error processing user: 4");
   });
 
   it("should handle null or undefined user object", async () => {
@@ -106,7 +106,16 @@ describe("findOneById", () => {
     };
 
     const userService = new UserService(mockUserRepository);
-    await expect(userService.findOneById("5")).rejects.toThrow("User with id 5 not found");
+    await expect(userService.findOneById("5")).rejects.toThrow("The user not found");
+  });
+
+  it("should throw error if the id is invalid", async () => {
+    const mockUserRepository = {
+      findById: jest.fn().mockResolvedValue(undefined),
+    };
+
+    const userService = new UserService(mockUserRepository);
+    await expect(userService.findOneById()).rejects.toThrow("The user information is required");
   });
 });
 
@@ -138,7 +147,7 @@ describe("findOneByUsername", () => {
     };
 
     const userService = new UserService(mockUserRepository);
-    await expect(userService.findOneByUsername("nonexistentuser")).rejects.toThrow("User with username nonexistentuser not found");
+    await expect(userService.findOneByUsername("nonexistentuser")).rejects.toThrow("The user not found");
   });
 
   it("should throw an error when the repository method fails", async () => {
@@ -147,7 +156,7 @@ describe("findOneByUsername", () => {
     };
 
     const userService = new UserService(mockUserRepository);
-    await expect(userService.findOneByUsername("testuser")).rejects.toThrow("Error finding user with username testuser");
+    await expect(userService.findOneByUsername("testuser")).rejects.toThrow("Error processing user: testuser");
   });
 
   it("should handle empty or null username input", async () => {
@@ -156,8 +165,8 @@ describe("findOneByUsername", () => {
     };
 
     const userService = new UserService(mockUserRepository);
-    await expect(userService.findOneByUsername(null)).rejects.toThrow("User with username null not found");
-    await expect(userService.findOneByUsername("")).rejects.toThrow("User with username  not found");
+    await expect(userService.findOneByUsername(null)).rejects.toThrow("The user information is required");
+    await expect(userService.findOneByUsername("")).rejects.toThrow("The user information is required");
   });
 });
 
@@ -189,7 +198,7 @@ describe("findOneByUsername", () => {
     };
 
     const userService = new UserService(mockUserRepository);
-    await expect(userService.findOneByUsername("nonexistentuser")).rejects.toThrow("User with username nonexistentuser not found");
+    await expect(userService.findOneByUsername("nonexistentuser")).rejects.toThrow("The user not found");
   });
 
   it("should throw an error when the repository call fails", async () => {
@@ -198,7 +207,7 @@ describe("findOneByUsername", () => {
     };
 
     const userService = new UserService(mockUserRepository);
-    await expect(userService.findOneByUsername("testuser")).rejects.toThrow("Error finding user with username testuser");
+    await expect(userService.findOneByUsername("testuser")).rejects.toThrow(`Error processing user: testuser`);
   });
 
   it("should handle empty or null username input", async () => {
@@ -207,8 +216,8 @@ describe("findOneByUsername", () => {
     };
 
     const userService = new UserService(mockUserRepository);
-    await expect(userService.findOneByUsername(null)).rejects.toThrow("User with username null not found");
-    await expect(userService.findOneByUsername("")).rejects.toThrow("User with username  not found");
+    await expect(userService.findOneByUsername(null)).rejects.toThrow("The user information is required");
+    await expect(userService.findOneByUsername("")).rejects.toThrow("The user information is required");
   });
 });
 
@@ -241,21 +250,34 @@ describe("update", () => {
     const userService = new UserService();
     const user = { name: "John Doe" };
 
-    await expect(userService.update(null, user)).rejects.toThrow("id is required");
+    await expect(userService.update(null, user)).rejects.toThrow("The user information is required");
   });
 
   it("should throw error when user object is null or undefined", async () => {
     const userService = new UserService();
 
-    await expect(userService.update("valid-id", null)).rejects.toThrow("name, username or characters are required");
-    await expect(userService.update("valid-id", undefined)).rejects.toThrow("name, username or characters are required");
+    await expect(userService.update("valid-id", null)).rejects.toThrow("The user information is required");
+    await expect(userService.update("valid-id", undefined)).rejects.toThrow("The user information is required");
   });
 
   it("should throw error when user object has no name, username, or characters", async () => {
     const userService = new UserService();
     const user = {};
 
-    await expect(userService.update("valid-id", user)).rejects.toThrow("name, username or characters are required");
+    await expect(userService.update("valid-id", user)).rejects.toThrow("The user information is required");
+  });
+
+  it("should throw error when the repository return null", async () => {
+    const mockUserRepository = {
+      update: jest.fn().mockResolvedValue(null),
+    };
+
+    const userService = new UserService(mockUserRepository);
+    const id = "valid-id";
+    const user = { name: "John Doe" };
+
+    expect(userService.update(id, user)).rejects.toThrow("The user not found");
+    expect(mockUserRepository.update).toHaveBeenCalledWith(id, user);
   });
 });
 
@@ -274,7 +296,7 @@ describe("delete", () => {
     const userService = new UserService(userRepository);
     const id = "valid-id";
 
-    await expect(userService.delete(id)).rejects.toThrow(`Error deleting user with id ${id}`);
+    await expect(userService.delete(id)).rejects.toThrow(`Error processing user: ${id}`);
   });
 
   it("should handle non-existent user id gracefully", async () => {
@@ -293,8 +315,8 @@ describe("delete", () => {
     };
     const userService = new UserService(userRepository);
 
-    await expect(userService.delete(null)).rejects.toThrow("Error deleting user with id null");
-    await expect(userService.delete(undefined)).rejects.toThrow("Error deleting user with id undefined");
+    await expect(userService.delete(null)).rejects.toThrow("The user information is required");
+    await expect(userService.delete(undefined)).rejects.toThrow("The user information is required");
   });
 });
 
@@ -353,7 +375,7 @@ describe("findUserByUsernameWithPassword", () => {
     };
     const userService = new UserService(mockUserRepository);
 
-    await expect(userService.findUserByUsernameWithPassword("nonexistentuser")).rejects.toThrow("User with username nonexistentuser not found");
+    await expect(userService.findUserByUsernameWithPassword("nonexistentuser")).rejects.toThrow("The user not found");
     expect(mockUserRepository.findOneByUsername).toHaveBeenCalledWith("nonexistentuser");
   });
 
@@ -363,8 +385,8 @@ describe("findUserByUsernameWithPassword", () => {
     };
     const userService = new UserService(mockUserRepository);
 
-    await expect(userService.findUserByUsernameWithPassword("")).rejects.toThrow("User with username  not found");
-    expect(mockUserRepository.findOneByUsername).toHaveBeenCalledWith("");
+    await expect(userService.findUserByUsernameWithPassword("")).rejects.toThrow("The user information is required");
+    expect(mockUserRepository.findOneByUsername).not.toHaveBeenCalled();
   });
 
   it("should throw error when username is null or undefined", async () => {
@@ -373,10 +395,10 @@ describe("findUserByUsernameWithPassword", () => {
     };
     const userService = new UserService(mockUserRepository);
 
-    await expect(userService.findUserByUsernameWithPassword(null)).rejects.toThrow("User with username null not found");
-    await expect(userService.findUserByUsernameWithPassword(undefined)).rejects.toThrow("User with username undefined not found");
-    expect(mockUserRepository.findOneByUsername).toHaveBeenCalledWith(null);
-    expect(mockUserRepository.findOneByUsername).toHaveBeenCalledWith(undefined);
+    await expect(userService.findUserByUsernameWithPassword(null)).rejects.toThrow("The user information is required");
+    await expect(userService.findUserByUsernameWithPassword(undefined)).rejects.toThrow("The user information is required");
+    expect(mockUserRepository.findOneByUsername).not.toHaveBeenCalled();
+    expect(mockUserRepository.findOneByUsername).not.toHaveBeenCalled();
   });
 
   it("should throw error when UserRepository throws an unexpected error", async () => {
@@ -385,7 +407,7 @@ describe("findUserByUsernameWithPassword", () => {
     };
     const userService = new UserService(mockUserRepository);
 
-    await expect(userService.findUserByUsernameWithPassword("johndoe")).rejects.toThrow("Error finding user with username johndoe");
+    await expect(userService.findUserByUsernameWithPassword("johndoe")).rejects.toThrow("Error processing user: johndoe");
     expect(mockUserRepository.findOneByUsername).toHaveBeenCalledWith("johndoe");
   });
 });
