@@ -89,7 +89,8 @@ describe("Integrations - comment controller - create", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "userId is required",
+      message: "The userId is required",
+      status: 400,
     });
     expect(commentModel.create).not.toHaveBeenCalled();
   });
@@ -132,7 +133,8 @@ describe("Integrations - comment controller - create", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "characterId and comment is required",
+      message: "The comment and characterId is required",
+      status: 400,
     });
     expect(commentModel.create).not.toHaveBeenCalled();
   });
@@ -175,7 +177,8 @@ describe("Integrations - comment controller - create", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "characterId and comment is required",
+      message: "The comment and characterId is required",
+      status: 400,
     });
     expect(commentModel.create).not.toHaveBeenCalled();
   });
@@ -215,10 +218,11 @@ describe("Integrations - comment controller - create", () => {
 
     await commentController.create(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toHaveBeenCalledWith(422);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "Failed to save comment",
+      message: "Transaction failed",
+      status: 422,
     });
     expect(commentModel.create).toHaveBeenCalled();
     expect(commentModel.create).toHaveBeenCalledWith({ ...req.body, userId: req.userId });
@@ -292,10 +296,11 @@ describe("Integration - comments controller - findAllByCharacterId", () => {
 
     await commentController.findAllByCharacterId(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "characterId is required",
+      message: "The characterId is required",
+      status: 400,
     });
     expect(commentModel.find).not.toHaveBeenCalled();
   });
@@ -322,10 +327,11 @@ describe("Integration - comments controller - findAllByCharacterId", () => {
 
     await commentController.findAllByCharacterId(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.status).toHaveBeenCalledWith(422);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "Failed to find comments",
+      message: "Transaction failed",
+      status: 422,
     });
     expect(commentModel.find).toHaveBeenCalledWith({ characterId: 30, state: true });
   });
@@ -398,10 +404,11 @@ describe("Integration - comments controller - findAllByUserId", () => {
 
     await commentController.findAllByUserId(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "userId is required",
+      message: "The userId is required",
+      status: 400,
     });
     expect(commentModel.find).not.toHaveBeenCalled();
   });
@@ -428,10 +435,11 @@ describe("Integration - comments controller - findAllByUserId", () => {
 
     await commentController.findAllByUserId(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.status).toHaveBeenCalledWith(422);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "Failed to find comments",
+      message: "Transaction failed",
+      status: 422,
     });
     expect(commentModel.find).toHaveBeenCalledWith({ userId: "userId-test", state: true });
   });
@@ -458,10 +466,11 @@ describe("Integration - comments controller - findAllByUserId", () => {
 
     await commentController.findAllByUserId(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.status).toHaveBeenCalledWith(422);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "Failed to find comments",
+      message: "Transaction failed",
+      status: 422,
     });
     expect(commentModel.find).toHaveBeenCalledWith({ userId: "userId-test", state: true });
   });
@@ -538,10 +547,11 @@ describe("Integration - comments controller - update", () => {
 
     await commentController.update(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "id is required",
+      message: "The userId is required",
+      status: 400,
     });
     expect(commentModel.findByIdAndUpdate).not.toHaveBeenCalled();
   });
@@ -571,10 +581,11 @@ describe("Integration - comments controller - update", () => {
 
     await commentController.update(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "comment is required",
+      message: "The comment is required",
+      status: 400,
     });
     expect(commentModel.findByIdAndUpdate).not.toHaveBeenCalled();
   });
@@ -604,10 +615,11 @@ describe("Integration - comments controller - update", () => {
 
     await commentController.update(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.status).toHaveBeenCalledWith(422);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "Failed to update comment",
+      message: "Transaction failed",
+      status: 422,
     });
     expect(commentModel.findByIdAndUpdate).toHaveBeenCalled();
   });
@@ -678,10 +690,11 @@ describe("Integration - comments controller - delete", () => {
 
     await commentController.delete(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "id is required",
+      message: "The userId is required",
+      status: 400,
     });
     expect(commentModel.findByIdAndUpdate).not.toHaveBeenCalled();
   });
@@ -708,10 +721,11 @@ describe("Integration - comments controller - delete", () => {
 
     await commentController.delete(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.status).toHaveBeenCalledWith(422);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "Failed to delete comment",
+      message: "Transaction failed",
+      status: 422,
     });
     expect(commentModel.findByIdAndUpdate).toHaveBeenCalled();
   });

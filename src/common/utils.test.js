@@ -1,3 +1,4 @@
+import { Exeption } from "./exeption.js";
 import { Utils } from "./utils.js";
 
 describe("buildSuccessResponse", () => {
@@ -67,46 +68,52 @@ describe("buildSuccessResponse", () => {
 });
 
 describe("buildErrorResponse", () => {
-  it("should return an error response object with success set to false when called", () => {
-    const instance = new Utils();
-    const message = "An error occurred";
-    const response = instance.buildErrorResponse(message);
+  it("should return default error message and status 500 for generic errors", () => {
+    const response = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+    const error = new Error("Some generic error");
+    const utils = new Utils();
 
-    expect(response).toEqual({ success: false, message });
+    utils.buildErrorResponse(error, response);
+
+    expect(response.status).toHaveBeenCalledWith(500);
+    expect(response.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 
-  it("should log error message to console in development environment", () => {
-    const instance = new Utils();
-    instance.isDevelopment = true;
-    console.error = jest.fn();
-    const message = "An error occurred";
+  it("should return custom error message and status for Exeption instances", () => {
+    const response = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+    const error = new Exeption("Custom error message", 404);
+    const utils = new Utils();
 
-    instance.buildErrorResponse(message);
+    utils.buildErrorResponse(error, response);
 
-    expect(console.error).toHaveBeenCalledWith(`[ERROR] ${message}`);
+    expect(response.status).toHaveBeenCalledWith(404);
+    expect(response.json).toHaveBeenCalledWith({ success: false, message: "Custom error message", status: 404 });
   });
 
-  it("should handle empty string as message", () => {
-    const instance = new Utils();
-    const message = "";
-    const response = instance.buildErrorResponse(message);
+  it("should handle null or undefined error object", () => {
+    const response = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+    const utils = new Utils();
 
-    expect(response).toEqual({ success: false, message });
+    utils.buildErrorResponse(null, response);
+
+    expect(response.status).toHaveBeenCalledWith(500);
+    expect(response.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 
-  it("should handle null as message", () => {
-    const instance = new Utils();
-    const message = null;
-    const response = instance.buildErrorResponse(message);
+  it("should handle null or undefined response object", () => {
+    const utils = new Utils();
 
-    expect(response).toEqual({ success: false, message });
+    expect(() => utils.buildErrorResponse(new Error("Some error"), null)).toThrow();
   });
 
-  it("should handle undefined as message", () => {
-    const instance = new Utils();
-    const message = undefined;
-    const response = instance.buildErrorResponse(message);
+  it("should handle error object without message property", () => {
+    const response = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+    const error = { status: 400 };
+    const utils = new Utils();
 
-    expect(response).toEqual({ success: false, message });
+    utils.buildErrorResponse(error, response);
+
+    expect(response.status).toHaveBeenCalledWith(500);
+    expect(response.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 });

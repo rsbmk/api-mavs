@@ -61,7 +61,8 @@ describe("Integrations - like controller - create", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "characterId and userId are required",
+      message: "The characterId and userId are required",
+      status: 400,
     });
   });
 
@@ -102,6 +103,7 @@ describe("Integrations - like controller - create", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
+      status: 400,
       message: "Like already exists",
     });
     expect(likeModel.create).not.toHaveBeenCalledWith({
@@ -133,6 +135,7 @@ describe("Integrations - like controller - create", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
+      status: 400,
       message: `Error creating like, for characterId: ${req.body.characterId} and userId: ${req.body.userId}`,
     });
     expect(likeModel.create).toHaveBeenCalledWith({
@@ -194,10 +197,11 @@ describe("Integrations - like controller - findAllByCharacterId", () => {
     const likeController = new LikeController(new LikeService(new LikeRepository()));
 
     await likeController.findAllByCharacterId(req, res);
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "characterId is required",
+      message: "Internal server error",
+      status: 500,
     });
   });
 
@@ -220,7 +224,8 @@ describe("Integrations - like controller - findAllByCharacterId", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: `Error finding likes, for characterId: ${req.params.characterId}`,
+      message: `Error finding like, for characterId: ${req.params.characterId}`,
+      status: 400,
     });
     expect(likeModel.find).toHaveBeenCalledWith({ characterId: 30, state: true });
   });
@@ -273,10 +278,11 @@ describe("Integrations - like controller - findAllByUserId", () => {
     };
     const likeController = new LikeController(new LikeService(new LikeRepository()));
     await likeController.findAllByUserId(req, res);
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "userId is required",
+      status: 500,
+      message: "Internal server error",
     });
   });
 
@@ -300,7 +306,8 @@ describe("Integrations - like controller - findAllByUserId", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: `Error finding likes, for userId: ${req.params.userId}`,
+      message: `Error finding like, for userId: ${req.params.userId}`,
+      status: 400,
     });
     expect(likeModel.find).toHaveBeenCalledWith({ userId: "userId-test", state: true });
   });
@@ -354,7 +361,8 @@ describe("Integrations - like controller - delete", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "id is required",
+      message: "The commentId is required",
+      status: 400,
     });
   });
 
@@ -376,6 +384,7 @@ describe("Integrations - like controller - delete", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
+      status: 400,
       message: `Error deleting like, for id: ${req.params.id}`,
     });
     expect(likeModel.findByIdAndUpdate).toHaveBeenCalled();

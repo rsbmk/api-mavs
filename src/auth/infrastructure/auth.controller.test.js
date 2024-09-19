@@ -83,7 +83,7 @@ describe("Integrations - AuthController", () => {
     expect(mockBcrypt).not.toHaveBeenCalled();
     expect(mockJwt).not.toHaveBeenCalled();
     expect(mockUserService.findUserByUsernameWithPassword).not.toHaveBeenCalled();
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "invalid user or password" });
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Credentials are required", status: 400 });
   });
 
   it("Throws an error if the password are different", async () => {
@@ -116,11 +116,11 @@ describe("Integrations - AuthController", () => {
 
     await authController.login(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toHaveBeenCalledWith(401);
     expect(mockBcrypt).toHaveBeenCalledWith("test", "test");
     expect(mockJwt).not.toHaveBeenCalled();
     expect(mockUserService.findUserByUsernameWithPassword).toHaveBeenCalledWith("test");
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "invalid user or password" });
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Invalid credentials", status: 401 });
   });
 
   it("Throws an error if the username or password are missing", async () => {
@@ -156,7 +156,7 @@ describe("Integrations - AuthController", () => {
     expect(mockBcrypt).not.toHaveBeenCalled();
     expect(mockJwt).not.toHaveBeenCalled();
     expect(mockUserService.findUserByUsernameWithPassword).not.toHaveBeenCalled();
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "invalid user or password" });
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Credentials are required", status: 400 });
   });
 
   it("User service throws an error", async () => {
@@ -189,10 +189,10 @@ describe("Integrations - AuthController", () => {
 
     await authController.login(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toHaveBeenCalledWith(500);
     expect(mockBcrypt).not.toHaveBeenCalled();
     expect(mockJwt).not.toHaveBeenCalled();
     expect(mockUserService.findUserByUsernameWithPassword).toHaveBeenCalledWith(userLoged.username);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "test error" });
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 });

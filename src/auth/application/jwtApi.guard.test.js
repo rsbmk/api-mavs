@@ -50,8 +50,9 @@ describe("JwtApiGuard", () => {
     expect(req.userId).toBeUndefined();
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({
-      message: "no authorization",
+      message: "Invalid credentials",
       success: false,
+      status: 401,
     });
   });
 });

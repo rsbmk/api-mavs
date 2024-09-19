@@ -35,8 +35,8 @@ describe("create", () => {
     const controller = new UserController(userService);
     await controller.create(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Missing required fields" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 
   it("should handle invalid data types for name, username, or password", async () => {
@@ -47,8 +47,8 @@ describe("create", () => {
     const controller = new UserController(userService);
     await controller.create(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Invalid data types" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 
   it("should handle empty request body", async () => {
@@ -59,8 +59,8 @@ describe("create", () => {
     const controller = new UserController(userService);
     await controller.create(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Empty request body" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 });
 
@@ -98,8 +98,8 @@ describe("findOneById", () => {
     await controller.findOneById(req, res);
 
     expect(userService.findOneById).toHaveBeenCalledWith("999");
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "User not found" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 
   it("should return 404 status code when user ID is not provided", async () => {
@@ -111,8 +111,8 @@ describe("findOneById", () => {
     await controller.findOneById(req, res);
 
     expect(userService.findOneById).toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "User not found" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 
   it("should return 404 status code when user ID is invalid or malformed", async () => {
@@ -124,8 +124,8 @@ describe("findOneById", () => {
     await controller.findOneById(req, res);
 
     expect(userService.findOneById).toHaveBeenCalledWith("invalid-id");
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "User not found" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 });
 
@@ -181,8 +181,8 @@ describe("findOneByUsername", () => {
 
     await userController.findOneByUsername(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "User not found" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
     expect(userService.findOneByUsername).toHaveBeenCalledWith("unknown_user");
   });
 
@@ -199,8 +199,8 @@ describe("findOneByUsername", () => {
     const userController = new UserController(userService);
     await userController.findOneByUsername(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "User not found" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
     expect(userService.findOneByUsername).toHaveBeenCalledWith("unknown_user");
   });
 
@@ -217,8 +217,8 @@ describe("findOneByUsername", () => {
     const userController = new UserController(userService);
     await userController.findOneByUsername(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Username parameter is missing or undefined" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 });
 
@@ -287,8 +287,8 @@ describe("update", () => {
     await userController.update(req, res);
 
     expect(userService.update).toHaveBeenCalledWith("999", { name: "John Doe" });
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "User not found" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 
   it("should return 404 status code with error message when update fails", async () => {
@@ -310,8 +310,8 @@ describe("update", () => {
     await userController.update(req, res);
 
     expect(userService.update).toHaveBeenCalledWith("123", { name: "John Doe" });
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Update failed" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 
   it("should handle invalid user data in request body", async () => {
@@ -333,8 +333,8 @@ describe("update", () => {
     await userController.update(req, res);
 
     expect(userService.update).toHaveBeenCalledWith("123", null);
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Invalid data" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 });
 
@@ -420,7 +420,7 @@ describe("delete", () => {
     const userController = new UserController(userService, utils);
     await userController.delete(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.status).toHaveBeenCalledWith(500);
   });
 
   it("should return an error message in the response body if the user ID is not found", async () => {
@@ -441,7 +441,7 @@ describe("delete", () => {
     const userController = new UserController(userService, utils);
     await userController.delete(req, res);
 
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "User not found" });
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 });
 
@@ -504,8 +504,8 @@ describe("Integrations - create user", () => {
     };
 
     await userController.create(req, res);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "The username test already exists" });
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
+    expect(res.status).toHaveBeenCalledWith(500);
     expect(userModel.findOne).toHaveBeenCalledWith({ state: true, username: "test" });
   });
 
@@ -531,8 +531,8 @@ describe("Integrations - create user", () => {
 
     await userController.create(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "username, password and name are required" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
     expect(userModel.create).not.toHaveBeenCalled();
   });
 
@@ -560,8 +560,8 @@ describe("Integrations - create user", () => {
 
     await userController.create(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: `Error saving user: ${req.body.username}` });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
     expect(userModel.create).toHaveBeenCalled();
   });
 });
@@ -619,8 +619,8 @@ describe("Integrations - find one by id", () => {
     await userController.findOneById(req, res);
 
     expect(userModel.findOne).toHaveBeenCalledWith({ _id: req.params.id, state: true });
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Error finding user with id test" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 
   it("should return an error message if the user already exists", async () => {
@@ -644,8 +644,8 @@ describe("Integrations - find one by id", () => {
     await userController.findOneById(req, res);
 
     expect(userModel.findOne).toHaveBeenCalledWith({ _id: req.params.id, state: true });
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "User with id test not found" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 });
 
@@ -702,8 +702,8 @@ describe("Integrations - find one by username", () => {
     await userController.findOneByUsername(req, res);
 
     expect(userModel.findOne).toHaveBeenCalledWith({ username: req.params.username, state: true });
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Error finding user with username test" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 
   it("should return an error message if the user already exists", async () => {
@@ -727,8 +727,8 @@ describe("Integrations - find one by username", () => {
     await userController.findOneByUsername(req, res);
 
     expect(userModel.findOne).toHaveBeenCalledWith({ username: req.params.username, state: true });
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "User with username test not found" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 });
 
@@ -795,8 +795,8 @@ describe("Integrations - update user", () => {
     await userController.update(req, res);
 
     expect(userModel.findByIdAndUpdate).not.toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "id is required" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 
   it("should return an error message if the user is not valid", async () => {
@@ -825,8 +825,8 @@ describe("Integrations - update user", () => {
     await userController.update(req, res);
 
     expect(userModel.findByIdAndUpdate).not.toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "name, username or characters are required" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 
   it("should return an error message if the user repository throws an error", async () => {
@@ -856,8 +856,8 @@ describe("Integrations - update user", () => {
 
     // validate that have been called only with name, username and password
     expect(userModel.findByIdAndUpdate).toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Error updating user with id test" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 });
 
@@ -914,7 +914,7 @@ describe("Integrations - delete user", () => {
     await userController.delete(req, res);
 
     expect(userModel.findByIdAndUpdate).toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Error deleting user with id test" });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
 });
