@@ -28,23 +28,5 @@ jobs:
       - name: Run lint
         run: npm run lint
 
-  test:
-    name: Test
-    needs:
-      - lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository codebase
-        uses: actions/checkout@v4
-
-      - name: setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22.x'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
       - name: Run tests
         run: npm run test
