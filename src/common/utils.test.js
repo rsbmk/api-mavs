@@ -116,4 +116,18 @@ describe("buildErrorResponse", () => {
     expect(response.status).toHaveBeenCalledWith(500);
     expect(response.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });
+
+  it("should log if is development environment", () => {
+    const utils = new Utils();
+    utils.isDevelopment = true;
+    console.error = jest.fn();
+    const error = new Exeption("Custom error message", 404);
+    const response = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+
+    utils.buildErrorResponse(error, response);
+
+    expect(console.error).toHaveBeenCalledWith("[ERROR] Custom error message");
+    expect(response.status).toHaveBeenCalledWith(404);
+    expect(response.json).toHaveBeenCalledWith({ success: false, message: "Custom error message", status: 404 });
+  });
 });
