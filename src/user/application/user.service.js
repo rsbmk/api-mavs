@@ -122,6 +122,10 @@ export class UserService {
       throw new Error(`Error updating user with id ${id}`);
     });
 
+    if (!updatedUser) {
+      throw new Error(`User with id ${id} not found`);
+    }
+
     return this.cleanPassword(updatedUser);
   }
 
@@ -146,6 +150,7 @@ export class UserService {
    * @returns {UserWithoutPassword} the user object without the password
    */
   cleanPassword(user) {
+    // eslint-disable-next-line no-unused-vars
     const { password, ...rest } = user;
     return rest;
   }
