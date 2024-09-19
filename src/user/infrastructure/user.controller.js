@@ -33,7 +33,7 @@ export class UserController {
       const user = await this.userService.create(req.body);
       res.status(201).json(this.utils.buildSuccessResponse("user created", user));
     } catch (error) {
-      res.status(400).json(this.utils.buildErrorResponse(error.message));
+      this.utils.buildErrorResponse(error, res);
     }
   }
 
@@ -48,7 +48,7 @@ export class UserController {
       const user = await this.userService.findOneById(id);
       res.status(200).json(this.utils.buildSuccessResponse("user found", user));
     } catch (error) {
-      res.status(404).json(this.utils.buildErrorResponse(error.message));
+      this.utils.buildErrorResponse(error, res);
     }
   }
 
@@ -63,7 +63,7 @@ export class UserController {
       const user = await this.userService.findOneByUsername(username);
       res.status(200).json(this.utils.buildSuccessResponse("user found", user));
     } catch (error) {
-      res.status(404).json(this.utils.buildErrorResponse(error.message));
+      this.utils.buildErrorResponse(error, res);
     }
   }
 
@@ -79,7 +79,7 @@ export class UserController {
       const userUpdated = await this.userService.update(id, user);
       res.status(200).json(this.utils.buildSuccessResponse("user updated", userUpdated));
     } catch (error) {
-      res.status(404).json(this.utils.buildErrorResponse(error.message));
+      this.utils.buildErrorResponse(error, res);
     }
   }
 
@@ -94,7 +94,7 @@ export class UserController {
       const user = await this.userService.delete(id);
       res.status(200).json(this.utils.buildSuccessResponse("user deleted", user));
     } catch (error) {
-      res.status(404).json(this.utils.buildErrorResponse(error.message));
+      this.utils.buildErrorResponse(error, res);
     }
   }
 }
