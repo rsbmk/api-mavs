@@ -1,6 +1,6 @@
 // @ts-check
 
-import { CommentIdRequired, CreateLikeFailed, DeleteLikeFailed, FindLikeFailed, LikeAlreadyExists, LikeDataRequiered } from "../domain/like.exeptions";
+import { CommentIdRequired, CreateLikeFailed, DeleteLikeFailed, FindLikeFailed, LikeAlreadyExists, LikeDataRequiered } from "../domain/like.exeptions.js";
 
 /**
  * @typedef {import('../domain/like.type').CreateLikeDTO} CreateLikeDTO
