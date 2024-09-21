@@ -60,31 +60,33 @@ describe("create", () => {
 
 describe("findOneById", () => {
   it("should retrieve user by valid id", async () => {
+    const user = [{ id: "1", username: "testuser", name: "Test User" }];
     const mockUserRepository = {
-      findById: jest.fn().mockResolvedValue({ id: "1", username: "testuser", name: "Test User" }),
+      findById: jest.fn().mockResolvedValue(user),
     };
 
     const userService = new UserService(mockUserRepository);
     const result = await userService.findOneById("1");
 
     expect(mockUserRepository.findById).toHaveBeenCalledWith("1");
-    expect(result).toEqual(expect.objectContaining({ id: "1", username: "testuser", name: "Test User" }));
+    expect(result).toEqual(expect.objectContaining(user[0]));
   });
 
   it("should return user object if found", async () => {
+    const user = [{ id: "2", username: "anotheruser", name: "Another User" }];
     const mockUserRepository = {
-      findById: jest.fn().mockResolvedValue({ id: "2", username: "anotheruser", name: "Another User" }),
+      findById: jest.fn().mockResolvedValue(user),
     };
 
     const userService = new UserService(mockUserRepository);
     const result = await userService.findOneById("2");
 
-    expect(result).toEqual(expect.objectContaining({ id: "2", username: "anotheruser", name: "Another User" }));
+    expect(result).toEqual(expect.objectContaining(user[0]));
   });
 
   it("should throw error if user not found", async () => {
     const mockUserRepository = {
-      findById: jest.fn().mockResolvedValue(null),
+      findById: jest.fn().mockResolvedValue([null]),
     };
 
     const userService = new UserService(mockUserRepository);
@@ -102,7 +104,7 @@ describe("findOneById", () => {
 
   it("should handle null or undefined user object", async () => {
     const mockUserRepository = {
-      findById: jest.fn().mockResolvedValue(undefined),
+      findById: jest.fn().mockResolvedValue([undefined]),
     };
 
     const userService = new UserService(mockUserRepository);
@@ -121,29 +123,31 @@ describe("findOneById", () => {
 
 describe("findOneByUsername", () => {
   it("should retrieve a user by username when the user exists", async () => {
+    const user = [{ id: "1", username: "testuser", name: "Test User" }];
     const mockUserRepository = {
-      findOneByUsername: jest.fn().mockResolvedValue({ id: "1", username: "testuser", name: "Test User" }),
+      findOneByUsername: jest.fn().mockResolvedValue(user),
     };
 
     const userService = new UserService(mockUserRepository);
     const result = await userService.findOneByUsername("testuser");
     expect(mockUserRepository.findOneByUsername).toHaveBeenCalledWith("testuser");
-    expect(result).toEqual(expect.objectContaining({ id: "1", username: "testuser", name: "Test User" }));
+    expect(result).toEqual(expect.objectContaining(user[0]));
   });
 
   it("should return the user object when found", async () => {
+    const user = [{ id: "1", username: "testuser", name: "Test User" }];
     const mockUserRepository = {
-      findOneByUsername: jest.fn().mockResolvedValue({ id: "1", username: "testuser", name: "Test User" }),
+      findOneByUsername: jest.fn().mockResolvedValue(user),
     };
 
     const userService = new UserService(mockUserRepository);
     const result = await userService.findOneByUsername("testuser");
-    expect(result).toEqual(expect.objectContaining({ id: "1", username: "testuser", name: "Test User" }));
+    expect(result).toEqual(expect.objectContaining(user[0]));
   });
 
   it("should throw an error when the user is not found", async () => {
     const mockUserRepository = {
-      findOneByUsername: jest.fn().mockResolvedValue(null),
+      findOneByUsername: jest.fn().mockResolvedValue([null]),
     };
 
     const userService = new UserService(mockUserRepository);
@@ -172,29 +176,31 @@ describe("findOneByUsername", () => {
 
 describe("findOneByUsername", () => {
   it("should retrieve a user by username when the user exists", async () => {
+    const user = [{ id: 1, username: "testuser" }];
     const mockUserRepository = {
-      findOneByUsername: jest.fn().mockResolvedValue({ id: 1, username: "testuser" }),
+      findOneByUsername: jest.fn().mockResolvedValue(user),
     };
 
     const userService = new UserService(mockUserRepository);
     const result = await userService.findOneByUsername("testuser");
-    expect(result).toEqual({ id: 1, username: "testuser" });
+    expect(result).toEqual(user[0]);
     expect(mockUserRepository.findOneByUsername).toHaveBeenCalledWith("testuser");
   });
 
   it("should return the user object when found by username", async () => {
+    const user = [{ id: 2, username: "anotheruser" }];
     const mockUserRepository = {
-      findOneByUsername: jest.fn().mockResolvedValue({ id: 2, username: "anotheruser" }),
+      findOneByUsername: jest.fn().mockResolvedValue(user),
     };
 
     const userService = new UserService(mockUserRepository);
     const result = await userService.findOneByUsername("anotheruser");
-    expect(result).toEqual({ id: 2, username: "anotheruser" });
+    expect(result).toEqual(user[0]);
   });
 
   it("should throw an error when the user with the given username does not exist", async () => {
     const mockUserRepository = {
-      findOneByUsername: jest.fn().mockResolvedValue(null),
+      findOneByUsername: jest.fn().mockResolvedValue([null]),
     };
 
     const userService = new UserService(mockUserRepository);
@@ -318,6 +324,18 @@ describe("delete", () => {
     await expect(userService.delete(null)).rejects.toThrow("The user information is required");
     await expect(userService.delete(undefined)).rejects.toThrow("The user information is required");
   });
+
+  it("should throw an error if the user not found", () => {
+    const userRepository = {
+      delete: jest.fn().mockResolvedValue(null),
+    };
+    const userService = new UserService(userRepository);
+    const id = "valid-id";
+
+    expect(userService.delete(id)).rejects.toThrow("The user not found");
+    expect(userRepository.delete).toHaveBeenCalledWith(id);
+    expect(userRepository.delete).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe("cleanPassword", () => {
@@ -325,7 +343,7 @@ describe("cleanPassword", () => {
     const user = { id: "1", name: "John Doe", password: "secret" };
     const userService = new UserService();
     const result = userService.cleanPassword(user);
-    expect(result).not.toHaveProperty("password");
+    expect(result).toEqual({ id: "1", name: "John Doe", password: undefined });
   });
 
   it("should return user object without password", () => {
@@ -359,19 +377,19 @@ describe("cleanPassword", () => {
 
 describe("findUserByUsernameWithPassword", () => {
   it("should return user object when username exists", async () => {
-    const user = { id: "1", username: "johndoe", password: "hashedpassword" };
+    const user = [{ id: "1", username: "johndoe", password: "hashedpassword" }];
     const mockUserRepository = {
       findOneByUsername: jest.fn().mockResolvedValue(user),
     };
     const userService = new UserService(mockUserRepository);
 
-    expect(await userService.findUserByUsernameWithPassword("johndoe")).toEqual(user);
+    expect(await userService.findUserByUsernameWithPassword("johndoe")).toEqual(user[0]);
     expect(mockUserRepository.findOneByUsername).toHaveBeenCalledWith("johndoe");
   });
 
   it("should throw error when username does not exist", async () => {
     const mockUserRepository = {
-      findOneByUsername: jest.fn().mockResolvedValue(null),
+      findOneByUsername: jest.fn().mockResolvedValue([null]),
     };
     const userService = new UserService(mockUserRepository);
 

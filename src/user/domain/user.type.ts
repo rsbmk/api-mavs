@@ -15,9 +15,9 @@ export type UserWithoutPassword = Omit<User, "password">;
 
 export type IUserRespository = {
   save: (user: CreateUserDTO) => Promise<User>;
-  findById: (id: string) => Promise<User | null>;
-  findOneByUsername: (username: string) => Promise<User | null>;
-  update: (id: string, user: Partial<User>) => Promise<User | null>;
+  findById: (id: string) => Promise<User[]>;
+  findOneByUsername: (username: string) => Promise<User[]>;
+  update: (id: string, user: Partial<User>) => Promise<User>;
   delete: (id: string) => Promise<User>;
 };
 
@@ -33,6 +33,6 @@ export type IUserService = {
 
 export type IUserModel = {
   create: (user: Partial<CreateUserDTO>) => Promise<User>;
-  findOne: (filter: Partial<User & { _id: string }>) => Promise<User | null>;
-  findByIdAndUpdate: (id: string, user: Partial<User>, options: { new: true }) => Promise<User | null>;
+  find: (filter: Partial<User & { _id: string }>) => Promise<User[]>;
+  findByIdAndUpdate: (id: string, user: Partial<User>, options: { new: true }) => Promise<User>;
 };

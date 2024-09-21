@@ -69,7 +69,7 @@ export class UserService {
   async findOneById(id) {
     if (!id) throw new UserDataRequired();
 
-    const user = await this.userRepository.findById(id).catch(() => {
+    const [user] = await this.userRepository.findById(id).catch(() => {
       // TODO: send this error to sentry
       throw new FailedlUser(id);
     });
@@ -86,7 +86,7 @@ export class UserService {
   async findOneByUsername(username) {
     if (!username) throw new UserDataRequired();
 
-    const user = await this.userRepository.findOneByUsername(username).catch(() => {
+    const [user] = await this.userRepository.findOneByUsername(username).catch(() => {
       // TODO: send this error to sentry
       throw new FailedlUser(username);
     });
@@ -131,6 +131,7 @@ export class UserService {
       throw new FailedlUser(id);
     });
 
+    if (!user) throw new UserNotFound();
     return this.cleanPassword(user);
   }
 
@@ -140,9 +141,9 @@ export class UserService {
    * @returns {UserWithoutPassword} the user object without the password
    */
   cleanPassword(user) {
-    // eslint-disable-next-line no-unused-vars
-    const { password, ...rest } = user;
-    return rest;
+    // @ts-ignore
+    user.password = undefined;
+    return user;
   }
 
   /**
@@ -152,7 +153,7 @@ export class UserService {
    */
   async findUserByUsernameWithPassword(username) {
     if (!username) throw new UserDataRequired();
-    const user = await this.userRepository.findOneByUsername(username).catch(() => {
+    const [user] = await this.userRepository.findOneByUsername(username).catch(() => {
       // TODO: send this error to sentry
       throw new FailedlUser(username);
     });

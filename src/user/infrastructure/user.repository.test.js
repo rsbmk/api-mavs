@@ -75,46 +75,47 @@ describe("save", () => {
 
 describe("findById", () => {
   it("should return a user object when a valid ID with state true is provided", async () => {
+    const user = [{ _id: "validId", state: true, name: "John Doe" }];
     const userModel = {
-      findOne: jest.fn().mockResolvedValue({ _id: "validId", state: true, name: "John Doe" }),
+      find: jest.fn().mockResolvedValue(user),
     };
     const userRepository = new UserRepository(userModel);
     const result = await userRepository.findById("validId");
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ _id: "validId", state: true });
-    expect(result).toEqual({ _id: "validId", state: true, name: "John Doe" });
+    expect(userModel.find).toHaveBeenCalledWith({ _id: "validId", state: true });
+    expect(result).toEqual(user);
   });
 
   it("should return null when no user matches the provided ID with state true", async () => {
     const userModel = {
-      findOne: jest.fn().mockResolvedValue(null),
+      find: jest.fn().mockResolvedValue(null),
     };
     const userRepository = new UserRepository(userModel);
     const result = await userRepository.findById("nonExistentId");
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ _id: "nonExistentId", state: true });
+    expect(userModel.find).toHaveBeenCalledWith({ _id: "nonExistentId", state: true });
     expect(result).toBeNull();
   });
 
   it("should handle invalid ID formats gracefully", async () => {
     const userModel = {
-      findOne: jest.fn().mockResolvedValue(null),
+      find: jest.fn().mockResolvedValue(null),
     };
     const userRepository = new UserRepository(userModel);
     const result = await userRepository.findById("invalidFormat");
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ _id: "invalidFormat", state: true });
+    expect(userModel.find).toHaveBeenCalledWith({ _id: "invalidFormat", state: true });
     expect(result).toBeNull();
   });
 
   it("should return null when the user with the given ID has state false", async () => {
     const userModel = {
-      findOne: jest.fn().mockResolvedValue(null),
+      find: jest.fn().mockResolvedValue(null),
     };
     const userRepository = new UserRepository(userModel);
     const result = await userRepository.findById("validIdWithStateFalse");
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ _id: "validIdWithStateFalse", state: true });
+    expect(userModel.find).toHaveBeenCalledWith({ _id: "validIdWithStateFalse", state: true });
     expect(result).toBeNull();
   });
 });
@@ -122,57 +123,57 @@ describe("findById", () => {
 describe("findOneByUsername", () => {
   it("should return user object when username exists and state is true", async () => {
     const userModel = {
-      findOne: jest.fn().mockResolvedValue({ username: "existingUser", state: true }),
+      find: jest.fn().mockResolvedValue({ username: "existingUser", state: true }),
     };
     const userRepository = new UserRepository(userModel);
     const result = await userRepository.findOneByUsername("existingUser");
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ username: "existingUser", state: true });
+    expect(userModel.find).toHaveBeenCalledWith({ username: "existingUser", state: true });
     expect(result).toEqual({ username: "existingUser", state: true });
   });
 
   it("should return null when username does not exist", async () => {
     const userModel = {
-      findOne: jest.fn().mockResolvedValue(null),
+      find: jest.fn().mockResolvedValue(null),
     };
     const userRepository = new UserRepository(userModel);
     const result = await userRepository.findOneByUsername("nonExistentUser");
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ username: "nonExistentUser", state: true });
+    expect(userModel.find).toHaveBeenCalledWith({ username: "nonExistentUser", state: true });
     expect(result).toBeNull();
   });
 
   it("should return null when username is an empty string", async () => {
     const userModel = {
-      findOne: jest.fn().mockResolvedValue(null),
+      find: jest.fn().mockResolvedValue(null),
     };
     const userRepository = new UserRepository(userModel);
     const result = await userRepository.findOneByUsername("");
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ username: "", state: true });
+    expect(userModel.find).toHaveBeenCalledWith({ username: "", state: true });
     expect(result).toBeNull();
   });
 
   it("should return null when username contains special characters", async () => {
     const userModel = {
-      findOne: jest.fn().mockResolvedValue(null),
+      find: jest.fn().mockResolvedValue(null),
     };
     const userRepository = new UserRepository(userModel);
     const result = await userRepository.findOneByUsername("user!@#");
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ username: "user!@#", state: true });
+    expect(userModel.find).toHaveBeenCalledWith({ username: "user!@#", state: true });
     expect(result).toBeNull();
   });
 
   it("should return null when username is a very long string", async () => {
     const longUsername = "a".repeat(256);
     const userModel = {
-      findOne: jest.fn().mockResolvedValue(null),
+      find: jest.fn().mockResolvedValue(null),
     };
     const userRepository = new UserRepository(userModel);
     const result = await userRepository.findOneByUsername(longUsername);
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ username: longUsername, state: true });
+    expect(userModel.find).toHaveBeenCalledWith({ username: longUsername, state: true });
     expect(result).toBeNull();
   });
 });
@@ -180,57 +181,57 @@ describe("findOneByUsername", () => {
 describe("findOneByUsername", () => {
   it("should return user object when username exists and state is true", async () => {
     const userModel = {
-      findOne: jest.fn().mockResolvedValue({ username: "existingUser", state: true }),
+      find: jest.fn().mockResolvedValue({ username: "existingUser", state: true }),
     };
     const userRepository = new UserRepository(userModel);
     const result = await userRepository.findOneByUsername("existingUser");
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ username: "existingUser", state: true });
+    expect(userModel.find).toHaveBeenCalledWith({ username: "existingUser", state: true });
     expect(result).toEqual({ username: "existingUser", state: true });
   });
 
   it("should return null when username does not exist", async () => {
     const userModel = {
-      findOne: jest.fn().mockResolvedValue(null),
+      find: jest.fn().mockResolvedValue(null),
     };
     const userRepository = new UserRepository(userModel);
     const result = await userRepository.findOneByUsername("nonExistentUser");
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ username: "nonExistentUser", state: true });
+    expect(userModel.find).toHaveBeenCalledWith({ username: "nonExistentUser", state: true });
     expect(result).toBeNull();
   });
 
   it("should return null when username is an empty string", async () => {
     const userModel = {
-      findOne: jest.fn().mockResolvedValue(null),
+      find: jest.fn().mockResolvedValue(null),
     };
     const userRepository = new UserRepository(userModel);
     const result = await userRepository.findOneByUsername("");
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ username: "", state: true });
+    expect(userModel.find).toHaveBeenCalledWith({ username: "", state: true });
     expect(result).toBeNull();
   });
 
   it("should return null when username contains special characters", async () => {
     const userModel = {
-      findOne: jest.fn().mockResolvedValue(null),
+      find: jest.fn().mockResolvedValue(null),
     };
     const userRepository = new UserRepository(userModel);
     const result = await userRepository.findOneByUsername("user!@#");
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ username: "user!@#", state: true });
+    expect(userModel.find).toHaveBeenCalledWith({ username: "user!@#", state: true });
     expect(result).toBeNull();
   });
 
   it("should return null when username is a very long string", async () => {
     const longUsername = "a".repeat(256);
     const userModel = {
-      findOne: jest.fn().mockResolvedValue(null),
+      find: jest.fn().mockResolvedValue(null),
     };
     const userRepository = new UserRepository(userModel);
     const result = await userRepository.findOneByUsername(longUsername);
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ username: longUsername, state: true });
+    expect(userModel.find).toHaveBeenCalledWith({ username: longUsername, state: true });
     expect(result).toBeNull();
   });
 });

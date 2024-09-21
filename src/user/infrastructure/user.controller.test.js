@@ -453,7 +453,7 @@ describe("Integrations - create user", () => {
   it("should create a new user", async () => {
     const userModel = {
       create: jest.fn().mockResolvedValue({}),
-      findOne: jest.fn().mockResolvedValue(null),
+      find: jest.fn().mockResolvedValue(null),
       findByIdAndUpdate: jest.fn().mockResolvedValue(null),
     };
 
@@ -475,7 +475,6 @@ describe("Integrations - create user", () => {
     await userController.create(req, res);
 
     expect(userModel.create).toHaveBeenCalled();
-    // validate that password not is the same "test"
     expect(userModel.create).not.toHaveBeenCalledWith({ password: "test" });
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({ success: true, message: "user created", data: {} });
@@ -492,7 +491,7 @@ describe("Integrations - create user", () => {
 
     const userModel = {
       create: jest.fn().mockResolvedValue({}),
-      findOne: jest.fn().mockResolvedValue(req.body),
+      find: jest.fn().mockResolvedValue(req.body),
       findByIdAndUpdate: jest.fn().mockResolvedValue(null),
     };
 
@@ -506,7 +505,7 @@ describe("Integrations - create user", () => {
     await userController.create(req, res);
     expect(res.json).toHaveBeenCalledWith({ success: false, message: "The username test already exists", status: 400 });
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(userModel.findOne).toHaveBeenCalledWith({ state: true, username: "test" });
+    expect(userModel.find).toHaveBeenCalledWith({ state: true, username: "test" });
   });
 
   it("should return an error message in the response if the user is invalid", async () => {
@@ -518,7 +517,7 @@ describe("Integrations - create user", () => {
 
     const userModel = {
       create: jest.fn().mockResolvedValue(null),
-      findOne: jest.fn().mockResolvedValue(null),
+      find: jest.fn().mockResolvedValue(null),
       findByIdAndUpdate: jest.fn().mockResolvedValue(null),
     };
 
@@ -547,7 +546,7 @@ describe("Integrations - create user", () => {
 
     const userModel = {
       create: jest.fn().mockRejectedValue(new Error("Error creating user")),
-      findOne: jest.fn().mockResolvedValue(null),
+      find: jest.fn().mockResolvedValue(null),
       findByIdAndUpdate: jest.fn().mockResolvedValue(null),
     };
 
@@ -581,7 +580,7 @@ describe("Integrations - find one by id", () => {
     };
 
     const userModel = {
-      findOne: jest.fn().mockResolvedValue(userFinded),
+      find: jest.fn().mockResolvedValue([userFinded]),
     };
 
     const userController = new UserController(new UserService(new UserRepository(userModel)));
@@ -593,7 +592,7 @@ describe("Integrations - find one by id", () => {
 
     await userController.findOneById(req, res);
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ _id: req.params.id, state: true });
+    expect(userModel.find).toHaveBeenCalledWith({ _id: req.params.id, state: true });
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ success: true, message: "user found", data: userFinded });
   });
@@ -606,7 +605,7 @@ describe("Integrations - find one by id", () => {
     };
 
     const userModel = {
-      findOne: jest.fn().mockRejectedValue(new Error("Error finding user")),
+      find: jest.fn().mockRejectedValue(new Error("Error finding user")),
     };
 
     const userController = new UserController(new UserService(new UserRepository(userModel)));
@@ -618,7 +617,7 @@ describe("Integrations - find one by id", () => {
 
     await userController.findOneById(req, res);
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ _id: req.params.id, state: true });
+    expect(userModel.find).toHaveBeenCalledWith({ _id: req.params.id, state: true });
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({ success: false, message: `Error processing user: ${req.params.id}`, status: 400 });
   });
@@ -631,7 +630,7 @@ describe("Integrations - find one by id", () => {
     };
 
     const userModel = {
-      findOne: jest.fn().mockResolvedValue(null),
+      find: jest.fn().mockResolvedValue([null]),
     };
 
     const userController = new UserController(new UserService(new UserRepository(userModel)));
@@ -643,7 +642,7 @@ describe("Integrations - find one by id", () => {
 
     await userController.findOneById(req, res);
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ _id: req.params.id, state: true });
+    expect(userModel.find).toHaveBeenCalledWith({ _id: req.params.id, state: true });
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({ success: false, message: "The user not found", status: 404 });
   });
@@ -664,7 +663,7 @@ describe("Integrations - find one by username", () => {
     };
 
     const userModel = {
-      findOne: jest.fn().mockResolvedValue(userFinded),
+      find: jest.fn().mockResolvedValue([userFinded]),
     };
 
     const userController = new UserController(new UserService(new UserRepository(userModel)));
@@ -676,7 +675,7 @@ describe("Integrations - find one by username", () => {
 
     await userController.findOneByUsername(req, res);
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ username: req.params.username, state: true });
+    expect(userModel.find).toHaveBeenCalledWith({ username: req.params.username, state: true });
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ success: true, message: "user found", data: userFinded });
   });
@@ -689,7 +688,7 @@ describe("Integrations - find one by username", () => {
     };
 
     const userModel = {
-      findOne: jest.fn().mockRejectedValue(new Error("Error finding user")),
+      find: jest.fn().mockRejectedValue(new Error("Error finding user")),
     };
 
     const userController = new UserController(new UserService(new UserRepository(userModel)));
@@ -701,7 +700,7 @@ describe("Integrations - find one by username", () => {
 
     await userController.findOneByUsername(req, res);
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ username: req.params.username, state: true });
+    expect(userModel.find).toHaveBeenCalledWith({ username: req.params.username, state: true });
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({ success: false, message: `Error processing user: ${req.params.username}`, status: 400 });
   });
@@ -714,7 +713,7 @@ describe("Integrations - find one by username", () => {
     };
 
     const userModel = {
-      findOne: jest.fn().mockResolvedValue(null),
+      find: jest.fn().mockResolvedValue([null]),
     };
 
     const userController = new UserController(new UserService(new UserRepository(userModel)));
@@ -726,7 +725,7 @@ describe("Integrations - find one by username", () => {
 
     await userController.findOneByUsername(req, res);
 
-    expect(userModel.findOne).toHaveBeenCalledWith({ username: req.params.username, state: true });
+    expect(userModel.find).toHaveBeenCalledWith({ username: req.params.username, state: true });
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({ success: false, message: "The user not found", status: 404 });
   });

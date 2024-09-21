@@ -39,20 +39,20 @@ export class UserRepository {
    * Retrieves a user by their ID.
    *
    * @param {string} id - The ID of the user to find.
-   * @return {Promise<User | null>} The user with the matching ID, or null if not found.
+   * @return {Promise<User[]>} The user with the matching ID, or null if not found.
    */
   findById(id) {
-    return this.userModel.findOne({ _id: id, state: true });
+    return this.userModel.find({ _id: id, state: true });
   }
 
   /**
    * Retrieves a user by their username.
    *
    * @param {string} username - The username of the user to find.
-   * @return {Promise<User | null>} The user with the matching username, or null if not found.
+   * @return {Promise<User[]>} The user with the matching username, or null if not found.
    */
   findOneByUsername(username) {
-    return this.userModel.findOne({ username, state: true });
+    return this.userModel.find({ username, state: true });
   }
 
   /**
@@ -60,7 +60,7 @@ export class UserRepository {
    *
    * @param {string} id - The ID of the user to update.
    * @param {Partial<User>} user - The updated user object.
-   * @return {Promise<User | null>} The updated user object.
+   * @return {Promise<User>} The updated user object.
    */
   update(id, user) {
     return this.userModel.findByIdAndUpdate(id, { ...user, updateAt: new Date() }, { new: true });
