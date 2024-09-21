@@ -457,7 +457,12 @@ describe("Integrations - create user", () => {
       findByIdAndUpdate: jest.fn().mockResolvedValue(null),
     };
 
-    const userController = new UserController(new UserService(new UserRepository(userModel)));
+    const mockBcrypt = {
+      hash: jest.fn().mockResolvedValue("hashedpassword"),
+      genSalt: jest.fn().mockResolvedValue("salt"),
+    };
+
+    const userController = new UserController(new UserService(new UserRepository(userModel), mockBcrypt));
 
     const req = {
       body: {
@@ -550,7 +555,13 @@ describe("Integrations - create user", () => {
       findByIdAndUpdate: jest.fn().mockResolvedValue(null),
     };
 
-    const userController = new UserController(new UserService(new UserRepository(userModel)));
+    const mockBcrypt = {
+      hash: jest.fn().mockResolvedValue("hashedpassword"),
+      genSalt: jest.fn().mockResolvedValue("salt"),
+      compare: jest.fn().mockResolvedValue(true),
+    };
+
+    const userController = new UserController(new UserService(new UserRepository(userModel), mockBcrypt));
 
     const res = {
       status: jest.fn().mockReturnThis(),

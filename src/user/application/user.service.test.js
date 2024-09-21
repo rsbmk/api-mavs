@@ -1,5 +1,4 @@
 import { UserService } from "./user.service";
-import bcrypt from "bcrypt";
 
 describe("create", () => {
   it("should create a user when valid data is provided", async () => {
@@ -9,13 +8,19 @@ describe("create", () => {
       findOneByUsername: jest.fn().mockResolvedValue(null),
       save: jest.fn().mockResolvedValue({ id: user.id, username: user.username, name: user.name, password: "hashedpassword" }),
     };
-    const userService = new UserService(mockUserRepository);
+    const mockBcrypt = {
+      hash: jest.fn().mockResolvedValue("hashedpassword"),
+      genSalt: jest.fn().mockResolvedValue("salt"),
+    };
+
+    const userService = new UserService(mockUserRepository, mockBcrypt);
 
     const result = await userService.create(user);
 
     expect(mockUserRepository.findOneByUsername).toHaveBeenCalledWith(user.username);
     expect(mockUserRepository.save).toHaveBeenCalledWith(expect.objectContaining({ username: user.username, name: user.name }));
-    expect(result).toEqual(expect.objectContaining({ id: user.id, username: user.username, name: user.name }));
+    expect(mockBcrypt.hash).toHaveBeenCalledWith(user.password, "salt");
+    expect(result).toEqual(expect.objectContaining({ id: user.id, username: user.username, name: user.name, password: undefined }));
   });
 
   it("should generate a salt and hash the password correctly", async () => {
@@ -23,16 +28,18 @@ describe("create", () => {
       findOneByUsername: jest.fn().mockResolvedValue(null),
       save: jest.fn().mockResolvedValue({ id: "1", username: "testuser", name: "Test User", password: "hashedpassword" }),
     };
-    const userService = new UserService(mockUserRepository);
-    const user = { username: "testuser", name: "Test User", password: "password123" };
 
-    const saltSpy = jest.spyOn(bcrypt, "genSalt").mockResolvedValue("salt");
-    const hashSpy = jest.spyOn(bcrypt, "hash").mockResolvedValue("hashedpassword");
+    const mockBcrypt = {
+      hash: jest.fn().mockResolvedValue("hashedpassword"),
+      genSalt: jest.fn().mockResolvedValue("salt"),
+    };
+    const userService = new UserService(mockUserRepository, mockBcrypt);
+    const user = { username: "testuser", name: "Test User", password: "password123" };
 
     await userService.create(user);
 
-    expect(saltSpy).toHaveBeenCalledWith(10);
-    expect(hashSpy).toHaveBeenCalledWith("password123", "salt");
+    expect(mockBcrypt.hash).toHaveBeenCalledWith("password123", "salt");
+    expect(mockUserRepository.save).toHaveBeenCalledWith(expect.objectContaining({ username: user.username, name: user.name }));
   });
 
   it("should throw an error when username is missing", async () => {

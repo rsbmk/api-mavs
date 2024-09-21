@@ -1,6 +1,5 @@
 // @ts-check
 
-import bcrypt from "bcrypt";
 import { FailedlUser, UserAlreadyExists, UserDataRequired, UserNotFound } from "../domain/user.exeptions.js";
 
 /**
@@ -9,6 +8,7 @@ import { FailedlUser, UserAlreadyExists, UserDataRequired, UserNotFound } from "
  * @typedef {import('../domain/user.type.js').CreateUserDTO} CreateUserDTO
  * @typedef {import('../domain/user.type.js').IUserRespository} IUserRespository
  * @typedef {import('../domain/user.type.js').IUserService} IUserService
+ * @typedef {import('../../libs/bcrypt/domain/bcrypt.type.js').IBcryptService} IBcryptService
  */
 
 /**
@@ -23,12 +23,19 @@ export class UserService {
   userRepository;
 
   /**
+   * @type {IBcryptService}
+   */
+  bcryptService;
+
+  /**
    * Creates an instance of UserService.
    *
    * @param {IUserRespository} userRepository - User Repository
+   * @param {IBcryptService} bcryptService - Bcrypt Service
    */
-  constructor(userRepository) {
+  constructor(userRepository, bcryptService) {
     this.userRepository = userRepository;
+    this.bcryptService = bcryptService;
   }
 
   /**
@@ -41,16 +48,15 @@ export class UserService {
    * @throws {Error} If the username already exists.
    */
   async create(user) {
-    const { username, name, password } = user;
+    let { username, name, password } = user;
     if (!username || !name || !password) throw new UserDataRequired();
 
     const isUsernameExist = await this.userRepository.findOneByUsername(username);
     if (isUsernameExist) throw new UserAlreadyExists(username);
 
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(password, salt);
+    password = await this.hashPassword(password);
 
-    const userCreated = await this.userRepository.save({ name, username, password: passwordHash }).catch(() => {
+    const userCreated = await this.userRepository.save({ name, username, password }).catch(() => {
       // TODO: send this error to sentry
       throw new FailedlUser(username);
     });
@@ -160,5 +166,15 @@ export class UserService {
 
     if (!user) throw new UserNotFound();
     return user;
+  }
+
+  /**
+   * Hash password
+   * @param {string} password - the password
+   * @returns {Promise<string>} the hashed password
+   */
+  async hashPassword(password) {
+    const salt = await this.bcryptService.genSalt(10);
+    return this.bcryptService.hash(password, salt);
   }
 }
