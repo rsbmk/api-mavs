@@ -1,12 +1,10 @@
-name: Test Codebase
+name: Test and lint Codebase
 
 on:
   push:
     branches:
       - main
   pull_request:
-    branches:
-      - main
 
 jobs:
   lint:
