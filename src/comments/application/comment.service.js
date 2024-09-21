@@ -1,6 +1,6 @@
 // @ts-check
 
-import { CharacterIdRequired, CommentDataRequired, CommentRequiered, TransactionFailed, UserIdRequired } from "../domain/comment.exeptions.js";
+import { CharacterIdRequired, CommentDataRequired, CommentIdRequired, CommentRequiered, TransactionFailed, UserIdRequired } from "../domain/comment.exeptions.js";
 
 /**
  * @typedef {import('../domain/commnet.type.js').Comment} Comment
@@ -76,7 +76,7 @@ export class CommentService {
    * @returns {Promise<Comment | null>} A promise that resolves to the updated comment or null if not found.
    */
   update(id, data) {
-    if (!id) throw new UserIdRequired();
+    if (!id) throw new CommentIdRequired();
 
     const { comment } = data;
     if (!comment) throw new CommentRequiered();
@@ -92,7 +92,7 @@ export class CommentService {
    * @returns {Promise<Comment | null>} A promise that resolves to the deleted comment.
    */
   delete(id) {
-    if (!id) throw new UserIdRequired();
+    if (!id) throw new CommentIdRequired();
     return this.commentRepository.update(id, { state: false, deleteAt: new Date() }).catch(() => {
       throw new TransactionFailed();
     });

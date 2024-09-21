@@ -31,3 +31,8 @@ export class CommentRequiered extends Exeption {
     super("The comment is required", 400);
   }
 }
+export class CommentIdRequired extends Exeption {
+  constructor() {
+    super("The commentId is required", 400);
+  }
+}

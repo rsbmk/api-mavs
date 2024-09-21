@@ -550,7 +550,7 @@ describe("Integration - comments controller - update", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "The userId is required",
+      message: "The commentId is required",
       status: 400,
     });
     expect(commentModel.findByIdAndUpdate).not.toHaveBeenCalled();
@@ -693,7 +693,7 @@ describe("Integration - comments controller - delete", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "The userId is required",
+      message: "The commentId is required",
       status: 400,
     });
     expect(commentModel.findByIdAndUpdate).not.toHaveBeenCalled();
