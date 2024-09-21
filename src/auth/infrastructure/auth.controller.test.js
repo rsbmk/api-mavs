@@ -1,13 +1,7 @@
-import bcrypt from "bcrypt";
-
 import { AuthService } from "../application/auth.service.js";
 import { AuthController } from "./auth.controller.js";
 
 describe("Integrations - AuthController", () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("login user", async () => {
     const userLoged = {
       username: "test",
@@ -15,14 +9,17 @@ describe("Integrations - AuthController", () => {
       id: "test",
     };
 
-    const mockBcrypt = jest.spyOn(bcrypt, "compare").mockResolvedValue(true);
     const mockUserService = {
       findUserByUsernameWithPassword: jest.fn().mockResolvedValue(userLoged),
     };
     const mockJwtService = {
       sign: jest.fn().mockReturnValue("jwt-test"),
     };
-    const authController = new AuthController(new AuthService(mockUserService, mockJwtService));
+    const mockBcryptService = {
+      compare: jest.fn().mockReturnValue(true),
+    };
+
+    const authController = new AuthController(new AuthService(mockUserService, mockJwtService, mockBcryptService));
 
     const req = {
       body: {
@@ -39,7 +36,8 @@ describe("Integrations - AuthController", () => {
     await authController.login(req, res);
 
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(mockBcrypt).toHaveBeenCalledWith("test", "test");
+    expect(mockJwtService.sign).toHaveBeenCalledWith({ id: userLoged.id });
+    expect(mockBcryptService.compare).toHaveBeenCalledWith(userLoged.password, userLoged.password);
     expect(mockUserService.findUserByUsernameWithPassword).toHaveBeenCalledWith("test");
     expect(res.json).toHaveBeenCalledWith({
       success: true,
@@ -55,8 +53,6 @@ describe("Integrations - AuthController", () => {
       id: "test",
     };
 
-    const mockBcrypt = jest.spyOn(bcrypt, "compare").mockResolvedValue(true);
-
     const mockUserService = {
       findUserByUsernameWithPassword: jest.fn().mockResolvedValue(userLoged),
     };
@@ -77,7 +73,6 @@ describe("Integrations - AuthController", () => {
     await authController.login(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(mockBcrypt).not.toHaveBeenCalled();
     expect(mockUserService.findUserByUsernameWithPassword).not.toHaveBeenCalled();
     expect(res.json).toHaveBeenCalledWith({ success: false, message: "Credentials are required", status: 400 });
   });
@@ -85,21 +80,25 @@ describe("Integrations - AuthController", () => {
   it("Throws an error if the password are different", async () => {
     const userLoged = {
       username: "test",
-      password: "test",
+      password: "test-different",
       id: "test",
     };
-
-    const mockBcrypt = jest.spyOn(bcrypt, "compare").mockResolvedValue(false);
 
     const mockUserService = {
       findUserByUsernameWithPassword: jest.fn().mockResolvedValue(userLoged),
     };
+    const mockJwtService = {
+      sign: jest.fn().mockReturnValue("jwt-test"),
+    };
+    const mockBcryptService = {
+      compare: jest.fn().mockReturnValue(false),
+    };
 
-    const authController = new AuthController(new AuthService(mockUserService));
+    const authController = new AuthController(new AuthService(mockUserService, mockJwtService, mockBcryptService));
 
     const req = {
       body: {
-        password: userLoged.password,
+        password: "test",
         username: userLoged.username,
       },
     };
@@ -112,8 +111,9 @@ describe("Integrations - AuthController", () => {
     await authController.login(req, res);
 
     expect(res.status).toHaveBeenCalledWith(401);
-    expect(mockBcrypt).toHaveBeenCalledWith("test", "test");
     expect(mockUserService.findUserByUsernameWithPassword).toHaveBeenCalledWith("test");
+    expect(mockBcryptService.compare).toHaveBeenCalledWith("test", "test-different");
+    expect(mockJwtService.sign).not.toHaveBeenCalled();
     expect(res.json).toHaveBeenCalledWith({ success: false, message: "Invalid credentials", status: 401 });
   });
 
@@ -123,8 +123,6 @@ describe("Integrations - AuthController", () => {
       password: "test",
       id: "test",
     };
-
-    const mockBcrypt = jest.spyOn(bcrypt, "compare").mockResolvedValue(true);
 
     const mockUserService = {
       findUserByUsernameWithPassword: jest.fn().mockResolvedValue(userLoged),
@@ -146,7 +144,6 @@ describe("Integrations - AuthController", () => {
     await authController.login(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(mockBcrypt).not.toHaveBeenCalled();
     expect(mockUserService.findUserByUsernameWithPassword).not.toHaveBeenCalled();
     expect(res.json).toHaveBeenCalledWith({ success: false, message: "Credentials are required", status: 400 });
   });
@@ -157,8 +154,6 @@ describe("Integrations - AuthController", () => {
       password: "test",
       id: "test",
     };
-
-    const mockBcrypt = jest.spyOn(bcrypt, "compare").mockResolvedValue(true);
 
     const mockUserService = {
       findUserByUsernameWithPassword: jest.fn().mockRejectedValue(new Error("test error")),
@@ -181,7 +176,6 @@ describe("Integrations - AuthController", () => {
     await authController.login(req, res);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(mockBcrypt).not.toHaveBeenCalled();
     expect(mockUserService.findUserByUsernameWithPassword).toHaveBeenCalledWith(userLoged.username);
     expect(res.json).toHaveBeenCalledWith({ success: false, message: "Internal server error", status: 500 });
   });

@@ -1,7 +1,5 @@
 // @ts-check
 
-import bcrypt from "bcrypt";
-
 import { CredentialsRequired, InvalidCredentials } from "../domain/auth.exeptions.js";
 
 /**
@@ -11,6 +9,7 @@ import { CredentialsRequired, InvalidCredentials } from "../domain/auth.exeption
  * @typedef {import('../domain/login.type.js').UserLogin} UserLogin
  * @typedef {import('../domain/login.type.js').IAuthService} IAuthService
  * @typedef {import('../../libs/jwt/domain/jwt.type.js').IJWTService} IJWTService
+ * @typedef {import('../../libs/bcrypt/domain/bcrypt.type.js').IBcryptService} IBcryptService
  */
 
 /**
@@ -29,13 +28,20 @@ export class AuthService {
   JWTService;
 
   /**
+   * @type {IBcryptService}
+   */
+  bcryptService;
+
+  /**
    * Creates an instance of LoginService.
    * @param {IUserService} userService - User Service
    * @param {IJWTService} JWTService - JWT Service
+   * @param {IBcryptService} bcryptService - Bcrypt Service
    */
-  constructor(userService, JWTService) {
+  constructor(userService, JWTService, bcryptService) {
     this.userService = userService;
     this.JWTService = JWTService;
+    this.bcryptService = bcryptService;
   }
 
   /**
@@ -50,7 +56,7 @@ export class AuthService {
     if (!username || !password) throw new CredentialsRequired();
 
     const user = await this.userService.findUserByUsernameWithPassword(username);
-    const isCorretPassword = await bcrypt.compare(password, user.password);
+    const isCorretPassword = await this.bcryptService.compare(password, user.password);
     if (!isCorretPassword) throw new InvalidCredentials();
 
     const token = this.generateToken(user.id);
