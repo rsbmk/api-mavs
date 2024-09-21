@@ -1,9 +1,7 @@
 // @ts-check
 
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
-import { EXPIRATION_JWT, SECRET_JWT } from "../../common/constants.js";
 import { CredentialsRequired, InvalidCredentials } from "../domain/auth.exeptions.js";
 
 /**
@@ -12,6 +10,7 @@ import { CredentialsRequired, InvalidCredentials } from "../domain/auth.exeption
  * @typedef {import('../domain/login.type.js').Credentials} Credentials
  * @typedef {import('../domain/login.type.js').UserLogin} UserLogin
  * @typedef {import('../domain/login.type.js').IAuthService} IAuthService
+ * @typedef {import('../../libs/jwt/domain/jwt.type.js').IJWTService} IJWTService
  */
 
 /**
@@ -25,11 +24,18 @@ export class AuthService {
   userService;
 
   /**
+   * @type {IJWTService}
+   */
+  JWTService;
+
+  /**
    * Creates an instance of LoginService.
    * @param {IUserService} userService - User Service
+   * @param {IJWTService} JWTService - JWT Service
    */
-  constructor(userService) {
+  constructor(userService, JWTService) {
     this.userService = userService;
+    this.JWTService = JWTService;
   }
 
   /**
@@ -57,6 +63,6 @@ export class AuthService {
    * @returns {string} the token
    */
   generateToken(userId) {
-    return jwt.sign({ id: userId }, SECRET_JWT, { expiresIn: EXPIRATION_JWT });
+    return this.JWTService.sign({ id: userId });
   }
 }
