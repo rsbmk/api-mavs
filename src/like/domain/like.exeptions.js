@@ -42,7 +42,16 @@ export class DeleteLikeFailed extends Exeption {
   }
 }
 
-export class CommentIdRequired extends Exeption {
+export class LikeNotFound extends Exeption {
+  /**
+   * @param {string} id - The like id
+   */
+  constructor(id) {
+    super(`Like not found, for id: ${id}`, 404);
+  }
+}
+
+export class LikeIdRequired extends Exeption {
   constructor() {
     super("The commentId is required", 400);
   }

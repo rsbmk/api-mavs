@@ -389,4 +389,28 @@ describe("Integrations - like controller - delete", () => {
     });
     expect(likeModel.findByIdAndUpdate).toHaveBeenCalled();
   });
+
+  it("should return an error message if the like it is not found", async () => {
+    const req = {
+      params: {
+        id: "like-id",
+      },
+    };
+    const likeModel = {
+      findByIdAndUpdate: jest.fn().mockResolvedValue(null),
+    };
+    const likeController = new LikeController(new LikeService(new LikeRepository(likeModel)));
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+    await likeController.delete(req, res);
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      status: 404,
+      message: `Like not found, for id: ${req.params.id}`,
+    });
+    expect(likeModel.findByIdAndUpdate).toHaveBeenCalled();
+  });
 });

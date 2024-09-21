@@ -1,6 +1,6 @@
 // @ts-check
 
-import { CommentIdRequired, CreateLikeFailed, DeleteLikeFailed, FindLikeFailed, LikeAlreadyExists, LikeDataRequiered } from "../domain/like.exeptions.js";
+import { CreateLikeFailed, DeleteLikeFailed, FindLikeFailed, LikeAlreadyExists, LikeDataRequiered, LikeIdRequired, LikeNotFound } from "../domain/like.exeptions.js";
 
 /**
  * @typedef {import('../domain/like.type').CreateLikeDTO} CreateLikeDTO
@@ -84,11 +84,14 @@ export class LikeService {
    * @param {string} id - Like id to delete
    * @returns {Promise<Like | null>} Like deleted
    */
-  delete(id) {
-    if (!id) throw new CommentIdRequired();
-    return this.userRepository.update(id, { state: false, deleteAt: new Date() }).catch(() => {
+  async delete(id) {
+    if (!id) throw new LikeIdRequired();
+    const like = await this.userRepository.update(id, { state: false, deleteAt: new Date() }).catch(() => {
       // TODO: send error to sentry
       throw new DeleteLikeFailed(id);
     });
+
+    if (!like) throw new LikeNotFound(id);
+    return like;
   }
 }
