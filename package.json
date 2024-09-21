@@ -9,7 +9,7 @@
     "start": "node -r dotenv/config server.js",
     "lint": "eslint .",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "test:ci": "node --experimental-vm-modules node_modules/jest/bin/jest.js --ci --coverage",
+    "test:ci": "node --experimental-vm-modules node_modules/jest/bin/jest.js --ci --coverage --coverageReporters json-summary",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll",
     "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage"
   },
@@ -57,9 +57,6 @@
     },
     "setupFiles": [
       "<rootDir>/test-setup.js"
-    ],
-    "coverageReporters": [
-      "json-summary"
     ]
   }
 }
