@@ -5,7 +5,7 @@ import { Utils } from "../../common/utils.js";
 /**
  * @typedef {import('../domain/like.type').CreateLikeDTO} CreateLikeDTO
  * @typedef {import('../domain/like.type').ILikeService} ILikeService
- * @typedef {import('express').Request} Request
+ * @typedef {import('express').Request  & {userId: string }} Request
  * @typedef {import('express').Response} Response
  */
 
@@ -30,8 +30,11 @@ export class LikeController {
    * @param {Response} res - Response
    */
   async create(req, res) {
+    const userId = req.userId;
+    const characterId = req.body.characterId;
+
     try {
-      const like = await this.likeService.create(req.body);
+      const like = await this.likeService.create({ characterId, userId });
       res.status(201).json(this.utils.buildSuccessResponse("Like created", like));
     } catch (error) {
       this.utils.buildErrorResponse(error, res);
@@ -45,8 +48,9 @@ export class LikeController {
    */
   async findAllByCharacterId(req, res) {
     const { characterId } = req.params;
+    const userId = req.userId;
     try {
-      const likes = await this.likeService.findAllByCharacterId(+characterId);
+      const likes = await this.likeService.findByCharacterAndUserId({ characterId: +characterId, userId });
       res.status(200).json(this.utils.buildSuccessResponse("Likes found", likes));
     } catch (error) {
       this.utils.buildErrorResponse(error, res);
@@ -59,7 +63,7 @@ export class LikeController {
    * @param {Response} res - Response
    */
   async findAllByUserId(req, res) {
-    const { userId } = req.params;
+    const userId = req.userId;
     try {
       const likes = await this.likeService.findAllByUserId(userId);
       res.status(200).json(this.utils.buildSuccessResponse("Likes found", likes));
