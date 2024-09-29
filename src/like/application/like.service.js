@@ -18,14 +18,14 @@ export class LikeService {
   /**
    * @type {ILikeRepository}
    */
-  userRepository;
+  likeRepository;
 
   /**
    * Create a new LikeService
-   * @param {ILikeRepository} userRepository - User Repository
+   * @param {ILikeRepository} likeRepository - Like Repository
    */
-  constructor(userRepository) {
-    this.userRepository = userRepository;
+  constructor(likeRepository) {
+    this.likeRepository = likeRepository;
   }
 
   /**
@@ -40,28 +40,34 @@ export class LikeService {
     const { characterId, userId } = like;
     if (!characterId || !userId) throw new LikeDataRequiered();
 
-    const likeExist = await this.userRepository.find({ characterId, userId });
+    const likeExist = await this.likeRepository.find({ characterId, userId });
     if (likeExist.length) throw new LikeAlreadyExists();
 
-    return this.userRepository.create(like).catch(() => {
+    return this.likeRepository.create(like).catch(() => {
       // TODO: send error to sentry
       throw new CreateLikeFailed(characterId, userId);
     });
   }
 
   /**
-   * Find all likes by character id
-   * @param {number} characterId - Character id to find likes
-   * @returns {Promise<Like[]>} Array of likes
+   * Find one like by user and character id
+   * @param {FindFilter} filter - Like filter to find likes by user and character id
+   * @returns {Promise<Like>} Like found
    *
-   * @throws {Error} if characterId is not provided
+   * @throws {Error} if characterId or userId are not provided
+   * @throws {Error} if like not found
    */
-  findAllByCharacterId(characterId) {
-    if (!characterId) throw new Error("characterId is required");
-    return this.userRepository.find({ characterId }).catch(() => {
+  async findByCharacterAndUserId(filter) {
+    const { characterId, userId } = filter;
+    if (!characterId || !userId) throw new LikeDataRequiered();
+
+    const [like] = await this.likeRepository.find({ characterId, userId }).catch(() => {
       // TODO: send error to sentry
       throw new FindLikeFailed("characterId", characterId);
     });
+
+    if (!like) throw new LikeNotFound(characterId);
+    return like;
   }
 
   /**
@@ -70,23 +76,27 @@ export class LikeService {
    * @returns {Promise<Like[]>} Array of likes
    *
    * @throws {Error} if userId is not provided
+   * @throws {Error} if like not found
    */
-  findAllByUserId(userId) {
+  async findAllByUserId(userId) {
     if (!userId) throw new Error("userId is required");
-    return this.userRepository.find({ userId }).catch(() => {
+    const likes = await this.likeRepository.find({ userId }).catch(() => {
       // TODO: send error to sentry
       throw new FindLikeFailed("userId", userId);
     });
+
+    if (!likes || !likes.length) throw new LikeNotFound(userId);
+    return likes;
   }
 
   /**
-   * Delete a like by id
-   * @param {string} id - Like id to delete
+   * Delete a like by id model
+   * @param {string} id - Like id model to delete
    * @returns {Promise<Like | null>} Like deleted
    */
   async delete(id) {
     if (!id) throw new LikeIdRequired();
-    const like = await this.userRepository.update(id, { state: false, deleteAt: new Date() }).catch(() => {
+    const like = await this.likeRepository.update(id, { state: false, deleteAt: new Date() }).catch(() => {
       // TODO: send error to sentry
       throw new DeleteLikeFailed(id);
     });

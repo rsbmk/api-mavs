@@ -19,7 +19,7 @@ export type ILikeRepository = {
 
 export type ILikeService = {
   create: (like: CreateLikeDTO) => Promise<Like>;
-  findAllByCharacterId: (characterId: number) => Promise<Like[]>;
+  findByCharacterAndUserId: (filter: FindFilter) => Promise<Like>;
   findAllByUserId: (userId: string) => Promise<Like[]>;
   delete: (id: string) => Promise<Like | null>;
 };
