@@ -167,6 +167,7 @@ describe("Integrations - like controller - findAllByCharacterId", () => {
     const likeController = new LikeController(new LikeService(new LikeRepository(likeModel)));
 
     const req = {
+      userId: "userId-test",
       params: {
         characterId: 30,
       },
@@ -183,9 +184,9 @@ describe("Integrations - like controller - findAllByCharacterId", () => {
     expect(res.json).toHaveBeenCalledWith({
       success: true,
       message: "Likes found",
-      data: likes,
+      data: likes[0],
     });
-    expect(likeModel.find).toHaveBeenCalledWith({ characterId: 30, state: true });
+    expect(likeModel.find).toHaveBeenCalledWith({ characterId: 30, state: true, userId: "userId-test" });
   });
 
   it("should return an error message in the response body if characterId is not provided", async () => {
@@ -197,16 +198,17 @@ describe("Integrations - like controller - findAllByCharacterId", () => {
     const likeController = new LikeController(new LikeService(new LikeRepository()));
 
     await likeController.findAllByCharacterId(req, res);
-    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: "Internal server error",
-      status: 500,
+      message: "The characterId and userId are required",
+      status: 400,
     });
   });
 
   it("should return an error message in the response body if the like repository throws an error", async () => {
     const req = {
+      userId: "userId-test",
       params: {
         characterId: 30,
       },
@@ -224,10 +226,37 @@ describe("Integrations - like controller - findAllByCharacterId", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: `Error finding like, for characterId: ${req.params.characterId}`,
+      message: "Error finding like, for characterId: 30",
       status: 400,
     });
-    expect(likeModel.find).toHaveBeenCalledWith({ characterId: 30, state: true });
+    expect(likeModel.find).toHaveBeenCalledWith({ characterId: 30, state: true, userId: "userId-test" });
+  });
+
+  it("should return an error message in the response body if the like is not found", async () => {
+    const req = {
+      userId: "userId-test",
+      params: {
+        characterId: 30,
+      },
+    };
+    const likeModel = {
+      find: jest.fn().mockResolvedValue([]),
+      findByIdAndUpdate: jest.fn(),
+    };
+    const likeController = new LikeController(new LikeService(new LikeRepository(likeModel)));
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await likeController.findAllByCharacterId(req, res);
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: "Like not found, for id: 30",
+      status: 404,
+    });
+    expect(likeModel.find).toHaveBeenCalledWith({ characterId: 30, state: true, userId: "userId-test" });
   });
 });
 
@@ -251,9 +280,7 @@ describe("Integrations - like controller - findAllByUserId", () => {
     const likeController = new LikeController(new LikeService(new LikeRepository(likeModel)));
 
     const req = {
-      params: {
-        userId: "userId-test",
-      },
+      userId: "userId-test",
     };
 
     const res = {
@@ -288,9 +315,7 @@ describe("Integrations - like controller - findAllByUserId", () => {
 
   it("should return an error message in the response body if the like repository throws an error", async () => {
     const req = {
-      params: {
-        userId: "userId-test",
-      },
+      userId: "userId-test",
     };
     const likeModel = {
       find: jest.fn().mockRejectedValue(new Error("Failed to find likes")),
@@ -306,8 +331,32 @@ describe("Integrations - like controller - findAllByUserId", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
-      message: `Error finding like, for userId: ${req.params.userId}`,
+      message: `Error finding like, for userId: ${req.userId}`,
       status: 400,
+    });
+    expect(likeModel.find).toHaveBeenCalledWith({ userId: "userId-test", state: true });
+  });
+
+  it("should return an error message in the response body if the likes are not found", async () => {
+    const req = {
+      userId: "userId-test",
+    };
+    const likeModel = {
+      find: jest.fn().mockResolvedValue([]),
+      findByIdAndUpdate: jest.fn(),
+    };
+    const likeController = new LikeController(new LikeService(new LikeRepository(likeModel)));
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await likeController.findAllByUserId(req, res);
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: `Like not found, for id: ${req.userId}`,
+      status: 404,
     });
     expect(likeModel.find).toHaveBeenCalledWith({ userId: "userId-test", state: true });
   });
