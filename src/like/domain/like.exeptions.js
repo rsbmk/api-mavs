@@ -44,7 +44,7 @@ export class DeleteLikeFailed extends Exeption {
 
 export class LikeNotFound extends Exeption {
   /**
-   * @param {string} id - The like id
+   * @param {string | number} id - The like id
    */
   constructor(id) {
     super(`Like not found, for id: ${id}`, 404);
