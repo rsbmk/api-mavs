@@ -51,7 +51,7 @@ export class UserService {
     let { username, name, password } = user;
     if (!username || !name || !password) throw new UserDataRequired();
 
-    const isUsernameExist = await this.userRepository.findOneByUsername(username);
+    const [isUsernameExist] = await this.userRepository.findOneByUsername(username);
     if (isUsernameExist) throw new UserAlreadyExists(username);
 
     password = await this.hashPassword(password);
