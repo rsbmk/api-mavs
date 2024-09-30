@@ -7,12 +7,6 @@ export class LikeDataRequiered extends Exeption {
   }
 }
 
-export class LikeAlreadyExists extends Exeption {
-  constructor() {
-    super("Like already exists", 400);
-  }
-}
-
 export class CreateLikeFailed extends Exeption {
   /**
    * @param {number} characterId - The characterId
