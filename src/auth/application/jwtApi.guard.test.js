@@ -1,5 +1,5 @@
-import { JwtService } from "../../libs/jwt/application/jwt.service.js";
 import { SECRET_JWT } from "../../common/constants.js";
+import { JwtService } from "../../libs/jwt/application/jwt.service.js";
 import { JwtApiGuard } from "./jwtApi.guard.js";
 
 describe("JwtApiGuard", () => {
@@ -51,6 +51,33 @@ describe("JwtApiGuard", () => {
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({
       message: "Invalid credentials",
+      success: false,
+      status: 401,
+    });
+  });
+
+  it("should handle unexpected error during token verification", () => {
+    const req = {
+      get: jest.fn().mockReturnValue("Bearer validtoken"),
+    };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+    const next = jest.fn();
+    const mockJWT = {
+      verify: jest.fn().mockImplementation(() => {
+        throw new Error("Unexpected error");
+      }),
+    };
+    const jwtApiGuard = new JwtApiGuard(new JwtService(mockJWT));
+
+    jwtApiGuard.run(req, res, next);
+    expect(next).not.toHaveBeenCalled();
+    expect(req.get).toHaveBeenCalledWith("authorization");
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Expired token",
       success: false,
       status: 401,
     });

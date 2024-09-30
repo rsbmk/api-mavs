@@ -13,3 +13,9 @@ export class InvalidCredentials extends Exeption {
     super("Invalid credentials", 401);
   }
 }
+
+export class ExpiredToken extends Exeption {
+  constructor() {
+    super("Expired token", 401);
+  }
+}

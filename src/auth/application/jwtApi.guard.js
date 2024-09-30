@@ -2,7 +2,7 @@
 
 import { BEARER_LENGTH } from "../../common/constants.js";
 import { Utils } from "../../common/utils.js";
-import { InvalidCredentials } from "../domain/auth.exeptions.js";
+import { ExpiredToken, InvalidCredentials } from "../domain/auth.exeptions.js";
 
 /**
  * @typedef {import('../../libs/jwt/domain/jwt.type.js').IJWTService} IJWTService
@@ -34,6 +34,9 @@ export class JwtApiGuard {
    * @param {Request} req - Request
    * @param {Response} res - Response
    * @param {NextFunction} next - NextFunction
+   *
+   * @throws {ExpiredToken} - If token is expired
+   * @throws {InvalidCredentials} - If token is invalid
    */
   run(req, res, next) {
     const authorization = req.get("authorization");
@@ -42,7 +45,14 @@ export class JwtApiGuard {
     }
 
     const token = authorization.substring(BEARER_LENGTH);
-    const decodeToken = this.jwtService.verify(token);
+    let decodeToken;
+    try {
+      decodeToken = this.jwtService.verify(token);
+    } catch (error) {
+      error;
+      return this.utils.buildErrorResponse(new ExpiredToken(), res);
+    }
+
     req.userId = decodeToken.id;
     next();
   }
