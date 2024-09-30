@@ -53,4 +53,13 @@ export class LikeRepository {
   update(id, like) {
     return this.likeModel.findByIdAndUpdate(id, like, { new: true });
   }
+
+  /**
+   * Count the number of likes for a character
+   * @param {number} characterId - The character id
+   * @returns {Promise<number>} The number of likes
+   */
+  count(characterId) {
+    return this.likeModel.countDocuments({ characterId, state: true });
+  }
 }

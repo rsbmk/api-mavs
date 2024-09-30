@@ -50,24 +50,21 @@ export class LikeService {
   }
 
   /**
-   * Find one like by user and character id
-   * @param {FindFilter} filter - Like filter to find likes by user and character id
-   * @returns {Promise<Like>} Like found
+   * Find the numbers of like that a character has
+   * @param {number} characterId - The character id
+   * @returns {Promise<{total: number}>} The number of likes
    *
    * @throws {Error} if characterId or userId are not provided
-   * @throws {Error} if like not found
    */
-  async findByCharacterAndUserId(filter) {
-    const { characterId, userId } = filter;
-    if (!characterId || !userId) throw new LikeDataRequiered();
+  async findAllByCharacterId(characterId) {
+    if (!characterId) throw new LikeDataRequiered();
 
-    const [like] = await this.likeRepository.find({ characterId, userId }).catch(() => {
+    const likes = await this.likeRepository.count(characterId).catch(() => {
       // TODO: send error to sentry
       throw new FindLikeFailed("characterId", characterId);
     });
 
-    if (!like) throw new LikeNotFound(characterId);
-    return like;
+    return { total: likes };
   }
 
   /**
