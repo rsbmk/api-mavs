@@ -9,15 +9,12 @@ import express from "express";
 import { notFound } from "./src/middleware/notFound.js";
 
 // routes
-import { userRouter } from "./src/user/infrastructure/user.route.js";
-import { commentRouter } from "./src/comments/infrastructure/comment.route.js";
 import { loginRouter } from "./src/auth/infrastructure/login.route.js";
+import { commentRouter } from "./src/comments/infrastructure/comment.route.js";
 import { likeRouter } from "./src/like/infrastructura/like.route.js";
+import { userRouter } from "./src/user/infrastructure/user.route.js";
 
 const app = express();
-
-// settings
-app.set("port", 3001);
 
 // midelware top
 app.use(cors());
