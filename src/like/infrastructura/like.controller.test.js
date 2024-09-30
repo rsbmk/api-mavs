@@ -66,7 +66,7 @@ describe("Integrations - like controller - create", () => {
     });
   });
 
-  it("should return an error message in the response body if like already exists", async () => {
+  it("should return like already exists in the response body", async () => {
     const likeCreated = {
       characterId: 30,
       userId: "userId-test",
@@ -78,7 +78,7 @@ describe("Integrations - like controller - create", () => {
     };
 
     const likeModel = {
-      create: jest.fn().mockResolvedValue(likeCreated),
+      create: jest.fn(),
       find: jest.fn().mockResolvedValue([likeCreated]),
       findByIdAndUpdate: jest.fn(),
     };
@@ -100,11 +100,11 @@ describe("Integrations - like controller - create", () => {
 
     await likeController.create(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({
-      success: false,
-      status: 400,
-      message: "Like already exists",
+      message: "Like created",
+      success: true,
+      data: likeCreated,
     });
     expect(likeModel.create).not.toHaveBeenCalledWith({
       characterId: likeCreated.characterId,

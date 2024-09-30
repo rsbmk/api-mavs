@@ -1,6 +1,6 @@
 // @ts-check
 
-import { CreateLikeFailed, DeleteLikeFailed, FindLikeFailed, LikeAlreadyExists, LikeDataRequiered, LikeIdRequired, LikeNotFound } from "../domain/like.exeptions.js";
+import { CreateLikeFailed, DeleteLikeFailed, FindLikeFailed, LikeDataRequiered, LikeIdRequired, LikeNotFound } from "../domain/like.exeptions.js";
 
 /**
  * @typedef {import('../domain/like.type').CreateLikeDTO} CreateLikeDTO
@@ -41,7 +41,7 @@ export class LikeService {
     if (!characterId || !userId) throw new LikeDataRequiered();
 
     const likeExist = await this.likeRepository.find({ characterId, userId });
-    if (likeExist.length) throw new LikeAlreadyExists();
+    if (likeExist.length) return likeExist[0];
 
     return this.likeRepository.create(like).catch(() => {
       // TODO: send error to sentry
