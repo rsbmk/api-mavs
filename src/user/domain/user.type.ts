@@ -33,6 +33,6 @@ export type IUserService = {
 
 export type IUserModel = {
   create: (user: Partial<CreateUserDTO>) => Promise<User>;
-  find: (filter: Partial<User & { _id: string }>) => Promise<User[]>;
+  find: (filter: Partial<User & { _id: string, toObject: () => User }>) => Promise<User[]>;
   findByIdAndUpdate: (id: string, user: Partial<User>, options: { new: true }) => Promise<User>;
 };

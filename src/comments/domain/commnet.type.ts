@@ -28,6 +28,6 @@ export type ICommentService = {
 
 export type ICommentModel = {
   create: (comment: CreateCommentDTO) => Promise<Comment>;
-  find: (filter: Partial<Comment & { _id: string }>) => Promise<Comment[]>;
+  find: (filter: Partial<Comment & { _id: string, toObject: () => Comment }>) => Promise<Comment[]>;
   findByIdAndUpdate: (id: string, comment: Partial<Comment>, options: { new: true }) => Promise<Comment | null>;
 };

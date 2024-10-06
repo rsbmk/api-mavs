@@ -20,14 +20,14 @@ export type ILikeRepository = {
 
 export type ILikeService = {
   create: (like: CreateLikeDTO) => Promise<Like>;
-  findAllByCharacterId: (characterId: number) => Promise<{ total: number }>;
+  findByCharacterAndUserId: (characterId: number) => Promise<Like & { total: number }>;
   findAllByUserId: (userId: string) => Promise<Like[]>;
   delete: (id: string) => Promise<Like | null>;
 };
 
 export type ILikeModel = {
   create: (like: CreateLikeDTO) => Promise<Like>;
-  find: (filter: Partial<Like>) => Promise<Like[]>;
+  find: (filter: Partial<Like>) => Promise<Like & { toObject: () => Like }[]>;
   countDocuments: (filter: Partial<Like>) => Promise<number>;
   findByIdAndUpdate: (id: string, like: Partial<Like>, options: { new: true }) => Promise<Like | null>;
 };
