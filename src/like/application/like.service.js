@@ -52,21 +52,21 @@ export class LikeService {
   /**
    * Find the numbers of like that a character has
    * @param {number} characterId - The character id
-   * @returns {Promise<{total: number}>} The number of likes
+   * @returns {Promise<Like & {total: number}>} The number of likes
    *
    * @throws {Error} if characterId or userId are not provided
    */
-  async findAllByCharacterId(characterId) {
+  async findByCharacterAndUserId(characterId) {
     if (!characterId) throw new LikeDataRequiered();
+    const [likes, characterLike] = await Promise.all([this.likeRepository.count(characterId), this.likeRepository.find({ characterId })]).catch(
+      () => {
+        // TODO: send error to sentry
+        throw new FindLikeFailed("characterId", characterId);
+      }
+    );
 
-    const likes = await this.likeRepository.count(characterId).catch(() => {
-      // TODO: send error to sentry
-      throw new FindLikeFailed("characterId", characterId);
-    });
-
-    return { total: likes };
+    return Object.assign({}, characterLike[0], { total: likes });
   }
-
   /**
    * Find all likes by user id
    * @param {string} userId - User id to find likes

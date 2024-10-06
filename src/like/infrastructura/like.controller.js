@@ -46,10 +46,10 @@ export class LikeController {
    * @param {Request} req - Request
    * @param {Response} res - Response
    */
-  async findAllByCharacterId(req, res) {
+  async findByCharacterAndUserId(req, res) {
     const { characterId } = req.params;
     try {
-      const likes = await this.likeService.findAllByCharacterId(+characterId);
+      const likes = await this.likeService.findByCharacterAndUserId(+characterId);
       res.status(200).json(this.utils.buildSuccessResponse("Likes found", likes));
     } catch (error) {
       this.utils.buildErrorResponse(error, res);

@@ -40,8 +40,9 @@ export class LikeRepository {
    * @param {FindFilter} filter - Like filter to find
    * @returns {Promise<Like[]>} Likes found
    */
-  find(filter) {
-    return this.likeModel.find({ ...filter, state: true });
+  async find(filter) {
+    const likes = await this.likeModel.find({ ...filter, state: true });
+    return likes.map((like) => like.toObject());
   }
 
   /**
