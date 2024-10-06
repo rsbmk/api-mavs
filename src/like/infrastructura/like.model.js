@@ -8,7 +8,7 @@
 import mongoose from "mongoose";
 
 /** @type {mongoose.Schema<Like>} */
-const shcema = new mongoose.Schema({
+const schema = new mongoose.Schema({
   userId: { type: String, required: true },
   characterId: { type: Number, required: true },
   state: { type: Boolean, default: true },
@@ -17,13 +17,21 @@ const shcema = new mongoose.Schema({
   deleteAt: { type: Date, default: null },
 });
 
-shcema.set("toJSON", {
-  transform: (_document, returnedObject) => {
-    returnedObject.id = returnedObject._id;
-    delete returnedObject.__v;
-    delete returnedObject._id;
+schema.set("toJSON", {
+  transform: (_doc, ret) => {
+    ret.id = ret._id;
+    delete ret._id;
+    delete ret.__v;
+  },
+});
+
+schema.set("toObject", {
+  transform: (_doc, ret) => {
+    ret.id = ret._id;
+    delete ret._id;
+    delete ret.__v;
   },
 });
 
 /** @type {LikeModel} */
-export const LikeModel = mongoose.model("Like", shcema);
+export const LikeModel = mongoose.model("Like", schema);

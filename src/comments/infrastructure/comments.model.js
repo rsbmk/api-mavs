@@ -19,10 +19,18 @@ const schema = new mongoose.Schema({
 });
 
 schema.set("toJSON", {
-  transform: (_document, returnedObject) => {
-    returnedObject.id = returnedObject._id;
-    delete returnedObject._id;
-    delete returnedObject.__v;
+  transform: (_doc, ret) => {
+    ret.id = ret._id;
+    delete ret._id;
+    delete ret.__v;
+  },
+});
+
+schema.set("toObject", {
+  transform: (_doc, ret) => {
+    ret.id = ret._id;
+    delete ret._id;
+    delete ret.__v;
   },
 });
 
