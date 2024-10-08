@@ -12,7 +12,6 @@ const schema = new mongoose.Schema({
   name: { type: String, required: true },
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  characters: { type: [Number], default: [] },
   state: { type: Boolean, default: true },
   createAt: { type: Date, default: Date.now },
   updateAt: { type: Date, default: Date.now },

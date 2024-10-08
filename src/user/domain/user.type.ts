@@ -1,7 +1,6 @@
 export type User = {
   name: string;
   username: string;
-  characters: [];
   state: boolean;
   password: string;
   deleteAt: Date | null;
