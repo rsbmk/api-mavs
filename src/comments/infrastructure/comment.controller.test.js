@@ -7,12 +7,15 @@ describe("Integrations - comment controller - create", () => {
     const commentCreated = {
       characterId: 30,
       comment: "This is a comment",
-      userId: "userId-test",
       state: true,
       deleteAt: null,
       createAt: "2024-09-17T04:03:27.539Z",
       updateAt: "2024-09-17T04:03:27.539Z",
       id: "comment-id",
+      user: {
+        id: "userId-test",
+        username: "test",
+      },
     };
 
     const commentModel = {
@@ -21,10 +24,14 @@ describe("Integrations - comment controller - create", () => {
       findByIdAndUpdate: jest.fn(),
     };
 
-    const commentController = new CommentController(new CommentService(new CommentRepository(commentModel)));
+    const userService = {
+      findOneById: jest.fn().mockResolvedValue({ id: commentCreated.user.id, username: commentCreated.user.username }),
+    };
+
+    const commentController = new CommentController(new CommentService(new CommentRepository(commentModel), userService));
 
     const req = {
-      userId: commentCreated.userId,
+      userId: commentCreated.user.id,
       body: {
         characterId: commentCreated.characterId,
         comment: commentCreated.comment,
@@ -47,7 +54,7 @@ describe("Integrations - comment controller - create", () => {
     expect(commentModel.create).toHaveBeenCalledWith({
       characterId: commentCreated.characterId,
       comment: commentCreated.comment,
-      userId: commentCreated.userId,
+      user: { id: commentCreated.user.id, username: commentCreated.user.username },
     });
   });
 
@@ -187,12 +194,15 @@ describe("Integrations - comment controller - create", () => {
     const commentCreated = {
       characterId: 30,
       comment: "This is a comment",
-      userId: "userId-test",
       state: true,
       deleteAt: null,
       createAt: "2024-09-17T04:03:27.539Z",
       updateAt: "2024-09-17T04:03:27.539Z",
       id: "comment-id",
+      user: {
+        id: "userId-test",
+        username: "test",
+      },
     };
 
     const commentModel = {
@@ -201,10 +211,14 @@ describe("Integrations - comment controller - create", () => {
       findByIdAndUpdate: jest.fn(),
     };
 
-    const commentController = new CommentController(new CommentService(new CommentRepository(commentModel)));
+    const userService = {
+      findOneById: jest.fn().mockResolvedValue({ id: commentCreated.user.id, username: commentCreated.user.username }),
+    };
+
+    const commentController = new CommentController(new CommentService(new CommentRepository(commentModel), userService));
 
     const req = {
-      userId: commentCreated.userId,
+      userId: commentCreated.user.id,
       body: {
         characterId: commentCreated.characterId,
         comment: commentCreated.comment,
@@ -225,7 +239,7 @@ describe("Integrations - comment controller - create", () => {
       status: 422,
     });
     expect(commentModel.create).toHaveBeenCalled();
-    expect(commentModel.create).toHaveBeenCalledWith({ ...req.body, userId: req.userId });
+    expect(commentModel.create).toHaveBeenCalledWith({ ...req.body, user: { id: commentCreated.user.id, username: commentCreated.user.username } });
   });
 });
 
@@ -361,9 +375,7 @@ describe("Integration - comments controller - findAllByUserId", () => {
     const commentController = new CommentController(new CommentService(new CommentRepository(commentModel)));
 
     const req = {
-      params: {
-        userId: "userId-test",
-      },
+      userId: "userId-test",
     };
 
     const res = {
@@ -379,7 +391,7 @@ describe("Integration - comments controller - findAllByUserId", () => {
       message: "comments found",
       data: comments,
     });
-    expect(commentModel.find).toHaveBeenCalledWith({ userId: "userId-test", state: true });
+    expect(commentModel.find).toHaveBeenCalledWith({ user: { id: "userId-test" }, state: true });
   });
 
   it("should return an error if user id is not provided", async () => {
@@ -423,9 +435,7 @@ describe("Integration - comments controller - findAllByUserId", () => {
     const commentController = new CommentController(new CommentService(new CommentRepository(commentModel)));
 
     const req = {
-      params: {
-        userId: "userId-test",
-      },
+      userId: "userId-test",
     };
 
     const res = {
@@ -441,7 +451,7 @@ describe("Integration - comments controller - findAllByUserId", () => {
       message: "Transaction failed",
       status: 422,
     });
-    expect(commentModel.find).toHaveBeenCalledWith({ userId: "userId-test", state: true });
+    expect(commentModel.find).toHaveBeenCalledWith({ user: { id: "userId-test" }, state: true });
   });
 
   it("should return an error if comment repository throws an error", async () => {
@@ -454,9 +464,7 @@ describe("Integration - comments controller - findAllByUserId", () => {
     const commentController = new CommentController(new CommentService(new CommentRepository(commentModel)));
 
     const req = {
-      params: {
-        userId: "userId-test",
-      },
+      userId: "userId-test",
     };
 
     const res = {
@@ -472,7 +480,7 @@ describe("Integration - comments controller - findAllByUserId", () => {
       message: "Transaction failed",
       status: 422,
     });
-    expect(commentModel.find).toHaveBeenCalledWith({ userId: "userId-test", state: true });
+    expect(commentModel.find).toHaveBeenCalledWith({ user: { id: "userId-test" }, state: true });
   });
 });
 
