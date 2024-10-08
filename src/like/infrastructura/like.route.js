@@ -9,6 +9,6 @@ export const likeRouter = Router();
 likeRouter
   .use(jwtApiGuard.run.bind(jwtApiGuard))
   .post("/", likeController.create.bind(likeController))
-  .get("/:characterId/character", likeController.findAllByCharacterId.bind(likeController))
+  .get("/characters/:characterId", likeController.findByCharacterAndUserId.bind(likeController))
   .get("/user", likeController.findAllByUserId.bind(likeController))
   .delete("/:id", likeController.delete.bind(likeController));
