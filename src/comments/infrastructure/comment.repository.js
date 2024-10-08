@@ -49,7 +49,7 @@ export class CommentRepository {
    * @returns {Promise<IComment[]>} A promise that resolves to an array of comments.
    */
   findAllByUserId(userId) {
-    return this.commentModel.find({ userId, state: true });
+    return this.commentModel.find({ user: { id: userId }, state: true });
   }
 
   /**

@@ -1,3 +1,5 @@
+import { RecursivePartial } from "../../common/utils.type";
+
 export type Comment = {
   characterId: number;
   comment: string;
@@ -38,6 +40,6 @@ export type ICommentService = {
 
 export type ICommentModel = {
   create: (comment: CreateCommentDTO) => Promise<Comment>;
-  find: (filter: Partial<Comment & { _id: string, toObject: () => Comment }>) => Promise<Comment[]>;
+  find: (filter: RecursivePartial<Comment & { toObject: () => Comment }>) => Promise<Comment[]>;
   findByIdAndUpdate: (id: string, comment: Partial<Comment>, options: { new: true }) => Promise<Comment | null>;
 };
