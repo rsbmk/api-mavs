@@ -52,18 +52,20 @@ export class LikeService {
   /**
    * Find the numbers of like that a character has
    * @param {number} characterId - The character id
-   * @returns {Promise<Like & {total: number}>} The number of likes
+   * @param {string} userId - The user id
+   * @returns {Promise<Like>} The number of likes
    *
    * @throws {Error} if characterId or userId are not provided
    */
-  async findByCharacterAndUserId(characterId) {
+  async findByCharacterAndUserId(characterId, userId) {
     if (!characterId) throw new LikeDataRequiered();
-    const [likes, characterLike] = await Promise.all([this.likeRepository.count(characterId), this.likeRepository.find({ characterId })]).catch(
-      () => {
-        // TODO: send error to sentry
-        throw new FindLikeFailed("characterId", characterId);
-      }
-    );
+    const [likes, characterLike] = await Promise.all([
+      this.likeRepository.count(characterId),
+      this.likeRepository.find({ characterId, userId }),
+    ]).catch(() => {
+      // TODO: send error to sentry
+      throw new FindLikeFailed("characterId", characterId);
+    });
 
     return Object.assign({}, characterLike[0], { total: likes });
   }
@@ -82,10 +84,16 @@ export class LikeService {
       throw new FindLikeFailed("userId", userId);
     });
 
-    if (!likes || !likes.length) throw new LikeNotFound(userId);
-    return likes;
+    return Promise.all(
+      likes.map(async (like) => {
+        const total = await this.likeRepository.count(like.characterId);
+        return { ...like, total };
+      })
+    ).catch(() => {
+      // TODO: send error to sentry
+      throw new FindLikeFailed("userId", userId);
+    });
   }
-
   /**
    * Delete a like by id model
    * @param {string} id - Like id model to delete
