@@ -2,6 +2,7 @@ export type Like = {
   id: string;
   userId: string;
   characterId: number;
+  total: number;
   state: boolean;
   createAt: Date;
   updateAt: Date;
@@ -20,7 +21,7 @@ export type ILikeRepository = {
 
 export type ILikeService = {
   create: (like: CreateLikeDTO) => Promise<Like>;
-  findByCharacterAndUserId: (characterId: number) => Promise<Like & { total: number }>;
+  findByCharacterAndUserId: (characterId: number, userId: string) => Promise<Like>;
   findAllByUserId: (userId: string) => Promise<Like[]>;
   delete: (id: string) => Promise<Like | null>;
 };
