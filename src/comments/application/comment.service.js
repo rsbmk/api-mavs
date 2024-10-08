@@ -1,6 +1,14 @@
 // @ts-check
 
-import { CharacterIdRequired, CommentDataRequired, CommentIdRequired, CommentRequiered, TransactionFailed, UserIdRequired } from "../domain/comment.exeptions.js";
+import { UserNotFound } from "../../user/domain/user.exeptions.js";
+import {
+  CharacterIdRequired,
+  CommentDataRequired,
+  CommentIdRequired,
+  CommentRequiered,
+  TransactionFailed,
+  UserIdRequired,
+} from "../domain/comment.exeptions.js";
 
 /**
  * @typedef {import('../domain/commnet.type.js').Comment} Comment
@@ -21,11 +29,18 @@ export class CommentService {
   commentRepository;
 
   /**
+   * @type {IUserService}
+   */
+  userService;
+
+  /**
    * Creates a new CommentService instance.
    * @param {ICommentRepository} commentRepository - The comment repository.
+   * @param {IUserService} userService - The comment repository.
    */
-  constructor(commentRepository) {
+  constructor(commentRepository, userService) {
     this.commentRepository = commentRepository;
+    this.userService = userService;
   }
 
   /**
@@ -34,15 +49,25 @@ export class CommentService {
    * @param {string} userId - The id of the user.
    * @returns {Promise<Comment>} A promise that resolves to the saved comment.
    */
-  create(userId, data) {
+  async create(userId, data) {
     if (!userId) throw new UserIdRequired();
 
     const { comment, characterId } = data;
     if (!(characterId && comment)) throw new CommentDataRequired();
 
-    return this.commentRepository.create({ characterId, comment, userId }).catch(() => {
-      throw new TransactionFailed();
+    const { id, username } = await this.userService.findOneById(userId).catch(() => {
+      throw new UserNotFound();
     });
+
+    return this.commentRepository
+      .create({
+        characterId,
+        comment,
+        user: { id, username },
+      })
+      .catch(() => {
+        throw new TransactionFailed();
+      });
   }
 
   /**
