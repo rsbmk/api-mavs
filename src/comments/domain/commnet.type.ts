@@ -1,7 +1,10 @@
 export type Comment = {
   characterId: number;
   comment: string;
-  userId: string;
+  user: {
+    id: string;
+    username: string;
+  }
   state: boolean;
   createAt: Date;
   updateAt: Date;
@@ -9,7 +12,14 @@ export type Comment = {
   id: string;
 };
 
-export type CreateCommentDTO = Pick<Comment, "characterId" | "comment" | "userId">;
+export type CreateCommentDTO = {
+  characterId: number;
+  comment: string;
+  user: {
+    id: string;
+    username: string;
+  }
+}
 
 export type ICommentRespository = {
   create: (comment: CreateCommentDTO) => Promise<Comment>;

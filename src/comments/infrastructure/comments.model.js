@@ -11,11 +11,14 @@ import mongoose from "mongoose";
 const schema = new mongoose.Schema({
   characterId: { type: Number, required: true },
   comment: { type: String, required: true },
-  userId: { type: String, required: true },
   state: { type: Boolean, default: true },
   createAt: { type: Date, default: Date.now },
   updateAt: { type: Date, default: Date.now },
   deleteAt: { type: Date, default: null },
+  user: {
+    id: { type: String, required: true },
+    username: { type: String, required: true },
+  },
 });
 
 schema.set("toJSON", {
