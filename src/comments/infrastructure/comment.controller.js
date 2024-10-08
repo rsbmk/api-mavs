@@ -6,7 +6,7 @@ import { Utils } from "../../common/utils.js";
  * @typedef {import('../domain/commnet.type.js').Comment} Comment
  * @typedef {import('../domain/commnet.type.js').CreateCommentDTO} CreateCommentDTO
  * @typedef {import('../domain/commnet.type.js').ICommentService} ICommentService
- * @typedef {import('express').Request} Request
+ * @typedef {import('express').Request & { userId: string }} Request
  * @typedef {import('express').Response} Response
  */
 
@@ -64,7 +64,7 @@ export class CommentController {
    * @param {Response} res - Response
    */
   async findAllByUserId(req, res) {
-    const { userId } = req.params;
+    const { userId } = req;
     try {
       const comments = await this.commentService.findAllByUserId(userId);
       res.status(200).json(this.utils.buildSuccessResponse("comments found", comments));
