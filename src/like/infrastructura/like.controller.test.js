@@ -89,7 +89,6 @@ describe("Integrations - like controller - create", () => {
       userId: likeCreated.userId,
       body: {
         characterId: likeCreated.characterId,
-        userId: likeCreated.userId,
       },
     };
 
@@ -145,16 +144,26 @@ describe("Integrations - like controller - create", () => {
   });
 });
 
-describe("Integrations - like controller - findAllByCharacterId", () => {
+describe("Integrations - like controller - findByCharacterAndUserId", () => {
   it("should find all likes by character id", async () => {
+    const likefinded = {
+      characterId: 30,
+      userId: "userId-test",
+      state: true,
+      deleteAt: null,
+      createAt: "2024-09-17T04:03:27.539Z",
+      updateAt: "2024-09-17T04:03:27.539Z",
+      id: "like-id",
+    };
     const likeModel = {
       countDocuments: jest.fn().mockResolvedValue(10),
-      findByIdAndUpdate: jest.fn(),
+      find: jest.fn().mockResolvedValue([likefinded]),
     };
 
     const likeController = new LikeController(new LikeService(new LikeRepository(likeModel)));
 
     const req = {
+      userId: "userId-test",
       params: {
         characterId: 30,
       },
@@ -165,7 +174,7 @@ describe("Integrations - like controller - findAllByCharacterId", () => {
       json: jest.fn(),
     };
 
-    await likeController.findAllByCharacterId(req, res);
+    await likeController.findByCharacterAndUserId(req, res);
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
@@ -173,6 +182,7 @@ describe("Integrations - like controller - findAllByCharacterId", () => {
       message: "Likes found",
       data: {
         total: 10,
+        ...likefinded,
       },
     });
     expect(likeModel.countDocuments).toHaveBeenCalledWith({ characterId: 30, state: true });
@@ -186,7 +196,7 @@ describe("Integrations - like controller - findAllByCharacterId", () => {
     };
     const likeController = new LikeController(new LikeService(new LikeRepository()));
 
-    await likeController.findAllByCharacterId(req, res);
+    await likeController.findByCharacterAndUserId(req, res);
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
@@ -203,15 +213,15 @@ describe("Integrations - like controller - findAllByCharacterId", () => {
       },
     };
     const likeModel = {
-      countDocuments: jest.fn().mockRejectedValue(new Error("Failed to find likes")),
-      findByIdAndUpdate: jest.fn(),
+      countDocuments: jest.fn().mockRejectedValue(new Error()),
+      find: jest.fn(),
     };
     const likeController = new LikeController(new LikeService(new LikeRepository(likeModel)));
     const res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
     };
-    await likeController.findAllByCharacterId(req, res);
+    await likeController.findByCharacterAndUserId(req, res);
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       success: false,
@@ -237,7 +247,7 @@ describe("Integrations - like controller - findAllByUserId", () => {
     ];
     const likeModel = {
       find: jest.fn().mockResolvedValue(likes),
-      findByIdAndUpdate: jest.fn(),
+      countDocuments: jest.fn(),
     };
     const likeController = new LikeController(new LikeService(new LikeRepository(likeModel)));
 
@@ -295,30 +305,6 @@ describe("Integrations - like controller - findAllByUserId", () => {
       success: false,
       message: `Error finding like, for userId: ${req.userId}`,
       status: 400,
-    });
-    expect(likeModel.find).toHaveBeenCalledWith({ userId: "userId-test", state: true });
-  });
-
-  it("should return an error message in the response body if the likes are not found", async () => {
-    const req = {
-      userId: "userId-test",
-    };
-    const likeModel = {
-      find: jest.fn().mockResolvedValue([]),
-      findByIdAndUpdate: jest.fn(),
-    };
-    const likeController = new LikeController(new LikeService(new LikeRepository(likeModel)));
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    };
-
-    await likeController.findAllByUserId(req, res);
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({
-      success: false,
-      message: `Like not found, for id: ${req.userId}`,
-      status: 404,
     });
     expect(likeModel.find).toHaveBeenCalledWith({ userId: "userId-test", state: true });
   });
