@@ -58,6 +58,57 @@ describe("Integrations - comment controller - create", () => {
     });
   });
 
+  it("should catch the error when not found a user to create a comment", async () => {
+    const commentCreated = {
+      characterId: 30,
+      comment: "This is a comment",
+      state: true,
+      deleteAt: null,
+      createAt: "2024-09-17T04:03:27.539Z",
+      updateAt: "2024-09-17T04:03:27.539Z",
+      id: "comment-id",
+      user: {
+        id: "userId-test",
+        username: "test",
+      },
+    };
+
+    const commentModel = {
+      create: jest.fn().mockResolvedValue(commentCreated),
+      find: jest.fn(),
+      findByIdAndUpdate: jest.fn(),
+    };
+
+    const userService = {
+      findOneById: jest.fn().mockRejectedValue(new Error()),
+    };
+
+    const commentController = new CommentController(new CommentService(new CommentRepository(commentModel), userService));
+
+    const req = {
+      userId: commentCreated.user.id,
+      body: {
+        characterId: commentCreated.characterId,
+        comment: commentCreated.comment,
+      },
+    };
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await commentController.create(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "The user not found",
+      status: 404,
+      success: false,
+    });
+    expect(commentModel.create).not.toHaveBeenCalled();
+  });
+
   it("should return an error if userId is not provided", async () => {
     const commentCreated = {
       characterId: 30,
