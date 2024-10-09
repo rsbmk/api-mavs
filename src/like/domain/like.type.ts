@@ -28,7 +28,7 @@ export type ILikeService = {
 
 export type ILikeModel = {
   create: (like: CreateLikeDTO) => Promise<Like>;
-  find: (filter: Partial<Like>) => Promise<Like & { toObject: () => Like }[]>;
+  find: (filter: Partial<Like>) => Promise<Like[]>;
   countDocuments: (filter: Partial<Like>) => Promise<number>;
   findByIdAndUpdate: (id: string, like: Partial<Like>, options: { new: true }) => Promise<Like | null>;
 };

@@ -40,6 +40,6 @@ export type ICommentService = {
 
 export type ICommentModel = {
   create: (comment: CreateCommentDTO) => Promise<Comment>;
-  find: (filter: RecursivePartial<Comment & { toObject: () => Comment }>) => Promise<Comment[]>;
+  find: (filter: RecursivePartial<Comment>) => Promise<Comment[]>;
   findByIdAndUpdate: (id: string, comment: Partial<Comment>, options: { new: true }) => Promise<Comment | null>;
 };
