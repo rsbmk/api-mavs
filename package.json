@@ -8,7 +8,7 @@
     "dev": "node --watch -r dotenv/config server.js",
     "start": "node -r dotenv/config server.js",
     "lint": "eslint .",
-    "build": "exit 0",
+    "build": "echo 'build'",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:ci": "node --experimental-vm-modules node_modules/jest/bin/jest.js --ci --coverage --coverageReporters json-summary",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll",
