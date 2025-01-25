@@ -1,0 +1,7 @@
+@BASE_URL = http://localhost:3001/v1/api
+@USER_ID = 6794f340dabc4686c4fa58b8
+@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OTRmMzQwZGFiYzQ2ODZjNGZhNThiOCIsImlhdCI6MTczNzgxNDg0OCwiZXhwIjoxNzM3ODE4NDQ4fQ.Gh8v9HkE7pkm392rgD20pv3XL8zo1PStrO7phiAb4F4
+
+GET {{BASE_URL}}/likes/user
+content-type: application/json
+Authorization: Bearer {{TOKEN}}
