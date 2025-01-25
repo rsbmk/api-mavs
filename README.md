@@ -6,44 +6,63 @@
 ![Statements](./badges/coverage-statements.svg)
 ![Jest coverage](./badges/coverage-jest%20coverage.svg)
 
-## Tabla de contenidos
-* [Sobre el proyecto](#Sobre-el-proyecto)
-* [Características destacadas](#Características-destacadas)
-* [Instalación](#Instalación)
+## Purpose
 
-## Sobre el proyecto
+This repository contains the backend for the **Mavs** project. It serves as an API for the frontend application, handling operations such as creating likes and comments for Marvel superheroes, user creation, and session management. The goal of this backend is to provide a robust foundation for the frontend functionalities of the **Mavs** application.
 
-Este proyecto representa una de mis primeras incursiones en el desarrollo de aplicaciones REST API, centrándome específicamente en la arquitectura Backend for Frontend (BFF). Diseñado como una práctica inicial, este proyecto tiene como objetivo proporcionar funcionalidades específicas para facilitar el consumo de datos por parte del frontend.
+## Features
 
-Este proyecto demuestra mi capacidad para comprender y aplicar conceptos clave en el desarrollo de APIs, así como mi habilidad para adaptarme a nuevas arquitecturas, reflejando un compromiso constante con la mejora y la adquisición de nuevas habilidades.
+- **Create Users**: Enables user registration for the application.
+- **Create Comments**: Allows users to leave comments on superhero profiles.
+- **Authentication**: Provides secure session management for users to interact with the app.
 
-## Características Clave
+## Usage
 
-- **Arquitectura BFF**: Implementación centrada en la arquitectura Backend for Frontend, permitiendo una comunicación eficiente entre el frontend y la API.
+1. **Clone the Repository**:
 
-- **Prácticas de Desarrollo**: El proyecto refleja mi aprendizaje inicial y las mejores prácticas adoptadas durante el proceso de desarrollo, sirviendo como testimonio de mi evolución en habilidades de programación.
+   ```bash
+   git clone <repository_url>
+   cd <repository_directory>
+   ```
 
-- **Optimización para Frontend**: Se han incorporado funcionalidades que simplifican y agilizan el consumo de datos por parte del frontend, mejorando la experiencia del usuario final.
+2. **Install Dependencies**:
+   Use `npm` to install the required dependencies:
 
-- **Proyecto de Aprendizaje**: Esta iniciativa no solo representa una implementación técnica, sino también un hito en mi trayectoria de aprendizaje, marcando el inicio de mi exploración en el desarrollo de soluciones completas.
+   ```bash
+   npm install
+   ```
 
-## Instalación
+3. **Environment Variables**:
 
-1. Clonar el repositorio
-```bash
-     # Clonar el repositorio
-    $ git clone git@github.com:rsbmk/api-mavs.git
+   - Refer to the `.env.example` file for the required environment variables.
+   - Copy `.env.example` and rename it to `.env`. Update the variables according to your configuration.
 
-    # Entrar en el directorio
-    $ cd api-mavs
-```
+4. **Run the Application Locally**:
 
-2. Instalar las dependencias
-```bash
-    $ npm install
-```
+   - Start the server using:
+     ```bash
+     npm start
+     ```
 
-3. Iniciar el servidor
-```bash
-    $ npm start
-```
+5. **Run Tests**:
+   - This project includes a 100% test coverage suite. To run tests, execute:
+     ```bash
+     npm test
+     ```
+
+## Technologies
+
+This backend repository uses the following technologies:
+
+- **Node.js**: JavaScript runtime environment.
+- **Express**: Framework for building web applications and APIs.
+- **MongoDB**: NoSQL database for storing application data.
+- **DDD Architecture**: Domain-Driven Design for maintaining a clean and modular architecture.
+
+## Contribution
+
+Contributions are welcome! While there is no specific contribution guideline at the moment, feel free to fork the repository, create a branch, and submit a pull request with your changes.
+
+## License
+
+This project is licensed under the **MIT License**. See the `LICENSE` file for more details.
