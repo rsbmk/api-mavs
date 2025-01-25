@@ -1,9 +1,9 @@
 // @ts-check
-import { NODE_ENV } from "../common/constants.js";
+import { NODE_ENV } from "./constants.js";
 import { Exeption } from "./exeption.js";
 
 /**
- * @typedef {import('./utils.type').IUtils} IUtils
+ * @typedef {import('./utils.type.js').IUtils} IUtils
  * @typedef {import('express').Response} Response
  */
 

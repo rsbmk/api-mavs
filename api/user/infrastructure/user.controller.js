@@ -3,7 +3,7 @@
 import { Utils } from "../../common/utils.js";
 
 /**
- * @typedef {import('../domain/user.type').IUserService} IUserService
+ * @typedef {import('../domain/user.type.js').IUserService} IUserService
  * @typedef {import('express').Request} Request
  * @typedef {import('express').Response} Response
  */

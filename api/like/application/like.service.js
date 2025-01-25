@@ -3,12 +3,12 @@
 import { CreateLikeFailed, DeleteLikeFailed, FindLikeFailed, LikeDataRequiered, LikeIdRequired, LikeNotFound } from "../domain/like.exeptions.js";
 
 /**
- * @typedef {import('../domain/like.type').CreateLikeDTO} CreateLikeDTO
- * @typedef {import('../domain/like.type').FindFilter} FindFilter
- * @typedef {import('../domain/like.type').ILikeRepository} ILikeRepository
- * @typedef {import('../domain/like.type').ILikeService} ILikeService
- * @typedef {import('../domain/like.type').Like} Like
- * @typedef {import("../domain/like.type").UserLike} UserLike
+ * @typedef {import('../domain/like.type.js').CreateLikeDTO} CreateLikeDTO
+ * @typedef {import('../domain/like.type.js').FindFilter} FindFilter
+ * @typedef {import('../domain/like.type.js').ILikeRepository} ILikeRepository
+ * @typedef {import('../domain/like.type.js').ILikeService} ILikeService
+ * @typedef {import('../domain/like.type.js').Like} Like
+ * @typedef {import("../domain/like.type.js").UserLike} UserLike
  */
 
 /**

@@ -3,8 +3,8 @@
 import { Utils } from "../../common/utils.js";
 
 /**
- * @typedef {import('../domain/like.type').CreateLikeDTO} CreateLikeDTO
- * @typedef {import('../domain/like.type').ILikeService} ILikeService
+ * @typedef {import('../domain/like.type.js').CreateLikeDTO} CreateLikeDTO
+ * @typedef {import('../domain/like.type.js').ILikeService} ILikeService
  * @typedef {import('express').Request  & {userId: string }} Request
  * @typedef {import('express').Response} Response
  */
