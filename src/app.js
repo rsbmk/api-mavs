@@ -1,18 +1,18 @@
 // @ts-check
 
-import "./dbConnection/mongo.js"; // conexion to the database
+import "./db/mongo.js"; // conexion to the database
 
 import cors from "cors";
 import express from "express";
 
 // middlewares
-import { notFound } from "./src/middleware/notFound.js";
+import { notFound } from "./middleware/notFound.js";
 
 // routes
-import { loginRouter } from "./src/auth/infrastructure/login.route.js";
-import { commentRouter } from "./src/comments/infrastructure/comment.route.js";
-import { likeRouter } from "./src/like/infrastructura/like.route.js";
-import { userRouter } from "./src/user/infrastructure/user.route.js";
+import { loginRouter } from "./auth/infrastructure/login.route.js";
+import { commentRouter } from "./comments/infrastructure/comment.route.js";
+import { likeRouter } from "./like/infrastructura/like.route.js";
+import { userRouter } from "./user/infrastructure/user.route.js";
 
 const app = express();
 
