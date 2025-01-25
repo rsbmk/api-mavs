@@ -234,20 +234,20 @@ describe("Integrations - like controller - findByCharacterAndUserId", () => {
 
 describe("Integrations - like controller - findAllByUserId", () => {
   it("should find all likes by user id", async () => {
-    const likes = [
-      {
-        characterId: 30,
-        userId: "userId-test",
-        state: true,
-        deleteAt: null,
-        createAt: "2024-09-17T04:03:27.539Z",
-        updateAt: "2024-09-17T04:03:27.539Z",
-        id: "like-id",
-      },
-    ];
+    const like = {
+      characterId: 30,
+      userId: "userId-test",
+      state: true,
+      deleteAt: null,
+      createAt: "2024-09-17T04:03:27.539Z",
+      updateAt: "2024-09-17T04:03:27.539Z",
+      id: "like-id",
+    };
+    const likes = [{ like, total: 1 }];
+
     const likeModel = {
-      find: jest.fn().mockResolvedValue(likes),
-      countDocuments: jest.fn(),
+      find: jest.fn().mockResolvedValue([like]),
+      countDocuments: jest.fn().mockResolvedValue(1),
     };
     const likeController = new LikeController(new LikeService(new LikeRepository(likeModel)));
 
