@@ -8,6 +8,7 @@ import { CreateLikeFailed, DeleteLikeFailed, FindLikeFailed, LikeDataRequiered, 
  * @typedef {import('../domain/like.type').ILikeRepository} ILikeRepository
  * @typedef {import('../domain/like.type').ILikeService} ILikeService
  * @typedef {import('../domain/like.type').Like} Like
+ * @typedef {import("../domain/like.type").UserLike} UserLike
  */
 
 /**
@@ -72,7 +73,7 @@ export class LikeService {
   /**
    * Find all likes by user id
    * @param {string} userId - User id to find likes
-   * @returns {Promise<Like[]>} Array of likes
+   * @returns {Promise<UserLike[]>} Array of likes
    *
    * @throws {Error} if userId is not provided
    * @throws {Error} if like not found
@@ -87,7 +88,7 @@ export class LikeService {
     return Promise.all(
       likes.map(async (like) => {
         const total = await this.likeRepository.count(like.characterId);
-        return { ...like, total };
+        return { like, total };
       })
     ).catch(() => {
       // TODO: send error to sentry

@@ -9,6 +9,8 @@ export type Like = {
   deleteAt: Date | null;
 };
 
+export type UserLike = { like: Like, total: number };
+
 export type CreateLikeDTO = Pick<Like, "userId" | "characterId">;
 export type FindFilter = Partial<Pick<Like, "userId" | "characterId">>;
 
@@ -22,7 +24,7 @@ export type ILikeRepository = {
 export type ILikeService = {
   create: (like: CreateLikeDTO) => Promise<Like>;
   findByCharacterAndUserId: (characterId: number, userId: string) => Promise<Like>;
-  findAllByUserId: (userId: string) => Promise<Like[]>;
+  findAllByUserId: (userId: string) => Promise<UserLike[]>;
   delete: (id: string) => Promise<Like | null>;
 };
 
